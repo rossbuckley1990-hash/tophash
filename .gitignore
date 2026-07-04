@@ -1,2 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+.pytest_cache/
+.venv/
+venv/
+env/
+build/
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.bak
+
+# TopHash project — exclude Z.ai infrastructure (not part of TopHash)
 skills/
-node_modules/
+upload/
+tool-results/
+worklog.md
+
+# TopHash — exclude large raw dataset caches (regenerable via scripts/fetch_datasets.py)
+# Keep benchmark results and charts (small, valuable)
+data/*/*.pkl
+data/*/*.txt.gz
+data/*/*.csv
+data/*/*.tar.gz
+
+# Local environment
+.env
+.env.local
+*.local
+
+# Logs
+*.log
+nohup.out
