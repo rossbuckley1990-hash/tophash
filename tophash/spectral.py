@@ -23,8 +23,19 @@ from scipy.sparse.linalg import eigsh
 from scipy.sparse import csr_matrix
 
 
-def compute_spectral_view(G: nx.Graph) -> np.ndarray:
-    """Compute the 10D spectral view of a graph."""
+def compute_spectral_view(G: nx.Graph, label_attr: str = None) -> np.ndarray:
+    """
+    Compute the 10D spectral view of a graph.
+
+    v0.2: If label_attr is set, the spectral view uses a LABEL-AWARE weighted
+    Laplacian. Edges between same-label nodes get weight 1.0; edges between
+    different-label nodes get weight 0.3. This emphasizes intra-label spectral
+    structure: the Fiedler value and eigengap now reflect label-aware
+    connectivity, not just topology.
+
+    A' = A * W, where W[i,j] = 1.0 if label[i]==label[j] else 0.3
+    L' = D' - A', where D' is the degree matrix of A'
+    """
     n = G.number_of_nodes()
     if n == 0:
         return np.zeros(10)
@@ -33,6 +44,10 @@ def compute_spectral_view(G: nx.Graph) -> np.ndarray:
 
     A = nx.to_numpy_array(G, nodelist=sorted(G.nodes()), dtype=float)
     np.fill_diagonal(A, 0.0)
+
+    # v0.2: Label-aware weighted adjacency
+    if label_attr is not None:
+        A = _label_aware_adjacency(A, G, sorted(G.nodes()), label_attr)
 
     # Laplacian: L = D - A
     D = np.diag(A.sum(axis=1))
@@ -108,3 +123,39 @@ def spectral_quality(spec_vec: np.ndarray) -> float:
         (1.0 - np.exp(-eigengap / 2.0)) * 0.3 + \
         (1.0 - np.exp(-std_L / 2.0)) * 0.3
     return float(np.clip(q, 0.0, 1.0))
+
+
+def _label_aware_adjacency(A: np.ndarray, G: nx.Graph, nodes: list,
+                            label_attr: str, cross_label_weight: float = 0.3) -> np.ndarray:
+    """
+    Build a label-aware weighted adjacency matrix.
+
+    A'[i,j] = A[i,j] * (1.0 if label[i]==label[j] else cross_label_weight)
+
+    Edges between same-label nodes keep full weight (1.0).
+    Edges between different-label nodes get reduced weight (cross_label_weight=0.3).
+
+    This emphasizes intra-label spectral structure: the Fiedler value and
+    eigengap of the resulting Laplacian reflect label-aware connectivity,
+    not just topology. Two graphs with the same topology but different label
+    assignments produce different label-aware Laplacians → different spectra.
+
+    The cross_label_weight of 0.3 is chosen so that:
+    - Same-label edges dominate the spectrum (weight 1.0)
+    - Cross-label edges still contribute but don't overwhelm (weight 0.3)
+    - The spectral gap remains sensitive to label structure
+    """
+    n = len(nodes)
+    labels = []
+    for node in nodes:
+        label = G.nodes[node].get(label_attr)
+        labels.append(str(label) if label is not None else "__unlabeled__")
+
+    # Build weight matrix: 1.0 for same-label, cross_label_weight for different
+    W = np.ones((n, n))
+    for i in range(n):
+        for j in range(n):
+            if labels[i] != labels[j]:
+                W[i, j] = cross_label_weight
+
+    return A * W

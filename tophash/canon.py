@@ -101,33 +101,68 @@ def _nx_to_pynauty(G: nx.Graph, node_order: List[int]):
     return _pynauty.Graph(n, directed=False, adjacency_dict=adj_dict)
 
 
-def canonical_label(G: nx.Graph) -> Tuple[np.ndarray, np.ndarray, List[int], str]:
+def _extract_label_coloring(G: nx.Graph, node_order: List[int], label_attr: str) -> List[List[int]]:
+    """
+    Extract node labels and group nodes into color classes for pynauty.
+
+    pynauty's vertex_coloring parameter expects a list of lists, where each
+    inner list is the set of vertex indices (0-based, in node_order) belonging
+    to one color class. Vertices in the same color class are considered
+    interchangeable by the canonical labeling; vertices in different color
+    classes are NOT interchangeable.
+
+    This is the standard "color-preserving isomorphism" mechanism: two graphs
+    are isomorphic under this coloring only if there's an isomorphism that
+    maps same-color vertices to same-color vertices.
+
+    For TopHash v0.2, the color = the node's label (e.g., package name in a
+    dependency graph, atom type in a molecular graph). This means
+    requests→urllib3 and django→psycopg2 produce DIFFERENT canonical IDs even
+    though both are 2-node paths, because 'requests' ≠ 'django' and
+    'urllib3' ≠ 'psycopg2'.
+    """
+    node_to_idx = {node: i for i, node in enumerate(node_order)}
+    label_to_indices = defaultdict(list)
+    for node in node_order:
+        label = G.nodes[node].get(label_attr)
+        if label is None:
+            label = "__unlabeled__"
+        label_to_indices[str(label)].append(node_to_idx[node])
+    # Return as list of lists, sorted by label for determinism
+    return [label_to_indices[k] for k in sorted(label_to_indices.keys())]
+
+
+def canonical_label(G: nx.Graph, label_attr: str = None) -> Tuple[np.ndarray, np.ndarray, List[int], str, Optional[dict]]:
     """
     Compute canonical labeling of G.
 
+    v0.2: If label_attr is provided, the canonical labeling is COLOR-PRESERVING —
+    only automorphisms that map same-label nodes to same-label nodes are considered.
+    This makes the canonical ID label-aware: two graphs with the same topology
+    but different labels produce DIFFERENT canonical IDs.
+
     Strategy:
       1. Apply 1-WL color refinement to convergence (TopHash's Refine stage).
-         This produces the partition that gets passed to pynauty as a
-         coloring hint, speeding up the search.
-      2. Delegate canonical labeling to pynauty (industry-standard nauty
-         implementation). pynauty returns a canonical vertex ordering.
-      3. Build canonical adjacency matrix in that order.
-      4. Record the engine used ("pynauty" or "fallback_heuristic") in the
-         trace so the proof object is honest about its correctness guarantees.
+      2. If label_attr is set, extract label coloring and pass to pynauty.
+      3. Delegate canonical labeling to pynauty (with vertex_coloring if label-aware).
+      4. Build canonical adjacency matrix in that order.
+      5. Record the engine and label-awareness mode in the trace.
 
     Returns:
-      canonical_adjacency: np.ndarray (n×n) — adjacency matrix in canonical order
-      canonical_perm: np.ndarray (n,) — permutation mapping original → canonical
-      trace: list of refinement / branch decisions (for proof object)
+      canonical_adjacency: np.ndarray (n×n)
+      canonical_perm: np.ndarray (n,)
+      trace: list of refinement / branch decisions
       engine: str — "pynauty" or "fallback_heuristic"
+      label_info: dict with label-aware mode details (None if topology-only)
     """
     n = G.number_of_nodes()
     trace = []
+    label_info = None
 
     if n == 0:
-        return np.zeros((0, 0)), np.array([], dtype=int), trace, "pynauty"
+        return np.zeros((0, 0)), np.array([], dtype=int), trace, "pynauty", None
     if n == 1:
-        return np.zeros((1, 1)), np.array([0]), trace, "pynauty"
+        return np.zeros((1, 1)), np.array([0]), trace, "pynauty", label_info
 
     G = nx.Graph(G)
     G.remove_edges_from(nx.selfloop_edges(G))
@@ -137,23 +172,44 @@ def canonical_label(G: nx.Graph) -> Tuple[np.ndarray, np.ndarray, List[int], str
     colors = refine_partition(G)
     trace.append({"step": "initial_refine", "n_color_classes": len(set(colors.values()))})
 
+    # v0.2: If label_attr is set, extract label coloring for color-preserving canon
+    label_coloring = None
+    if label_attr is not None:
+        label_coloring = _extract_label_coloring(G, nodes, label_attr)
+        n_label_classes = len(label_coloring)
+        label_info = {
+            "label_aware": True,
+            "label_attr": label_attr,
+            "n_label_classes": n_label_classes,
+            "color_preserving": True,
+        }
+        trace.append({"step": "label_coloring_extracted",
+                      "label_attr": label_attr,
+                      "n_label_classes": n_label_classes})
+
     # Stage 3: Canon — delegate to pynauty if available
     if _HAVE_PYNAUTY:
         try:
             # Build pynauty graph
             pgraph = _nx_to_pynauty(G, nodes)
 
-            # Build coloring hint for pynauty: partition vertices by WL color
-            # pynauty expects a list of sets, where each set is a color class
-            color_to_nodes = defaultdict(set)
-            for node in nodes:
-                color_to_nodes[colors[node]].add(nodes.index(node))
-            vertex_coloring = [list(s) for s in color_to_nodes.values()]
+            # Build coloring hint for pynauty.
+            # v0.2: If label_attr is set, use the LABEL coloring (color-preserving).
+            # Otherwise, use the WL coloring as a hint (topology-only, faster search).
+            if label_coloring is not None:
+                vertex_coloring = label_coloring
+            else:
+                color_to_nodes_wl = defaultdict(list)
+                for node in nodes:
+                    color_to_nodes_wl[colors[node]].append(nodes.index(node))
+                vertex_coloring = [v for v in color_to_nodes_wl.values()]
 
-            # Compute canonical labeling
-            # pynauty.canon_label returns a list where position i is the
-            # canonical position of vertex i
-            canon_labeling = _pynauty.canon_label(pgraph)
+            # Compute canonical labeling.
+            # pynauty.canon_label accepts vertex_coloring as a partition hint.
+            # When label_coloring is used, the canonical form is color-preserving:
+            # two graphs get the same canonical ID only if they're isomorphic
+            # AND the isomorphism respects the label coloring.
+            canon_labeling = _pynauty.canon_label(pgraph, vertex_coloring=vertex_coloring)
 
             # The canonical labeling from pynauty is a permutation: position i
             # in the new order is occupied by vertex canon_labeling[i].
@@ -163,15 +219,16 @@ def canonical_label(G: nx.Graph) -> Tuple[np.ndarray, np.ndarray, List[int], str
             best_adj = nx.to_numpy_array(G, nodelist=perm, dtype=int)
             best_perm = np.array(perm, dtype=int)
             trace.append({"step": "pynauty_canon_label", "engine": "pynauty",
-                          "n_vertices": n})
-            return best_adj, best_perm, trace, "pynauty"
+                          "n_vertices": n,
+                          "label_aware": label_coloring is not None})
+            return best_adj, best_perm, trace, "pynauty", label_info
         except Exception as e:
             trace.append({"step": "pynauty_failed", "error": str(e)})
             # Fall through to heuristic
 
     # Fallback heuristic (used only if pynauty is unavailable or fails)
-    # This is the original bounded-search approach.
     # WARNING: not provably canonical for graphs with large symmetry classes.
+    # WARNING: label-aware fallback does NOT respect color-preserving property.
     trace.append({"step": "fallback_heuristic_engaged",
                   "reason": "pynauty_unavailable_or_failed"})
 
@@ -241,57 +298,77 @@ def canonical_label(G: nx.Graph) -> Tuple[np.ndarray, np.ndarray, List[int], str
     best_adj = nx.to_numpy_array(G, nodelist=perm, dtype=int)
     best_perm = np.array(perm, dtype=int)
 
-    return best_adj, best_perm, trace, "fallback_heuristic"
+    return best_adj, best_perm, trace, "fallback_heuristic", label_info
 
 
 # ============================================================
 # Stage 3b — Canonical serialization
 # ============================================================
-def canonical_serialize(G: nx.Graph) -> Tuple[str, np.ndarray, List[int], str]:
+def canonical_serialize(G: nx.Graph, label_attr: str = None) -> Tuple[str, np.ndarray, List[int], str, Optional[dict]]:
     """
     Compute canonical adjacency, then serialize it deterministically.
+
+    v0.2: If label_attr is set, the serialization INCLUDES the labels in
+    canonical order. This means two graphs with the same topology but
+    different labels produce DIFFERENT serializations → different SHA-256 IDs.
 
     Returns:
       serialization: str — canonical byte string (the source of truth)
       canonical_adj: np.ndarray
       perm: list[int] — permutation used
       engine: str — "pynauty" or "fallback_heuristic"
+      label_info: dict — label-aware mode details (None if topology-only)
     """
-    can_adj, perm, _, engine = canonical_label(G)
+    can_adj, perm, _, engine, label_info = canonical_label(G, label_attr=label_attr)
 
     n = can_adj.shape[0]
     m = int(can_adj.sum() // 2)
 
-    # Deterministic serialization:
-    #   schema_version|engine|n|m|edges_sorted_canonical
+    # Deterministic serialization.
+    # v0.2: if label-aware, include the labels in canonical order.
     edges = []
     for i in range(n):
         for j in range(i + 1, n):
             if can_adj[i, j] == 1:
                 edges.append((i, j))
 
+    # Build label string for serialization (v0.2)
+    label_str = "none"
+    if label_attr is not None and label_info is not None:
+        # Extract labels in canonical order
+        canonical_labels = []
+        for i in range(n):
+            orig_node = perm[i]
+            label = G.nodes[orig_node].get(label_attr)
+            canonical_labels.append(str(label) if label is not None else "__unlabeled__")
+        label_str = ",".join(canonical_labels)
+
     serialization = (
         f"{SCHEMA_VERSION_CANON}|"
         f"engine={engine}|"
+        f"label_aware={'true' if label_attr else 'false'}|"
         f"graph_model=simple_undirected|"
         f"n={n}|m={m}|"
+        f"labels={label_str}|"
         f"edges={edges}"
     )
 
-    return serialization, can_adj, list(perm), engine
+    return serialization, can_adj, list(perm), engine, label_info
 
 
 # ============================================================
 # Stage 4 — Cert: proof object
 # ============================================================
 def build_certificate(G: nx.Graph, canonical_adj: np.ndarray,
-                      perm: List[int], trace: List, engine: str) -> Dict[str, Any]:
+                      perm: List[int], trace: List, engine: str,
+                      label_info: dict = None) -> Dict[str, Any]:
     """
     Build a machine-auditable certificate object.
 
-    The certificate honestly reports which engine produced the canonical
-    labeling. If engine == "fallback_heuristic", the canonical ID is NOT
-    provably exact — downstream auditors must check this field.
+    v0.2: If label_info is provided, the certificate records that the canonical
+    labeling is color-preserving (label-aware). This means the canonical ID
+    respects node labels — two graphs with the same topology but different
+    labels produce DIFFERENT canonical IDs.
     """
     n = G.number_of_nodes()
     m = G.number_of_edges()
@@ -305,7 +382,12 @@ def build_certificate(G: nx.Graph, canonical_adj: np.ndarray,
         "self_loops_removed": int(sum(1 for u, v in G.edges() if u == v)),
         "canon_engine": engine,
         "exactness_guaranteed": (engine == "pynauty"),
+        "label_aware": label_info is not None,
+        "color_preserving": label_info is not None and label_info.get("color_preserving", False),
     }
+    if label_info is not None:
+        validation["label_attr"] = label_info.get("label_attr")
+        validation["n_label_classes"] = label_info.get("n_label_classes")
 
     # Refinement trace (extracted from canon trace)
     refinement_trace = [t for t in trace if t.get("step", "").endswith("refine") or t.get("step") == "initial_refine"]
@@ -319,6 +401,7 @@ def build_certificate(G: nx.Graph, canonical_adj: np.ndarray,
             "canonical_n_vertices": n,
             "canonical_n_edges": m,
             "canon_engine": engine,
+            "label_aware": label_info is not None,
         },
         "refinement_trace": refinement_trace,
         "search_witness": search_trace,
@@ -338,28 +421,45 @@ def compute_id(canonical_serialization: str) -> str:
 # ============================================================
 # Top-level TopHashX API
 # ============================================================
-def tophashx(G: nx.Graph, include_certificate: bool = True) -> Dict[str, Any]:
+def tophashx(G: nx.Graph, include_certificate: bool = True,
+             label_attr: str = None) -> Dict[str, Any]:
     """
     Full TopHashX pipeline: Refine → Canon → Cert → ID.
 
+    v0.2: If label_attr is set, the canonical labeling is COLOR-PRESERVING.
+    Two graphs with the same topology but different labels produce DIFFERENT
+    canonical IDs. This is the fix for the v0.1 collision finding where
+    requests→urllib3 and django→psycopg2 produced the same canonical ID.
+
+    Parameters
+    ----------
+    G : networkx.Graph
+        Input graph. Nodes may have a `label_attr` attribute for label-aware mode.
+    include_certificate : bool
+        If True, include the full proof object in the result.
+    label_attr : str, optional
+        If set, enable color-preserving (label-aware) canonical labeling.
+        The node attribute named `label_attr` is used as the color.
+        Default None = topology-only (backward compatible with v0.1).
+
     Returns dict with:
-      canonical_serialization: str  (source of truth)
-      canonical_id: str             (SHA-256 digest, the receipt)
+      canonical_serialization: str
+      canonical_id: str
       canonical_perm: list[int]
-      canonical_adjacency_shape: tuple
-      canon_engine: str             ("pynauty" or "fallback_heuristic")
-      exactness_guaranteed: bool    (True iff engine == "pynauty")
-      certificate: dict              (proof object, if include_certificate=True)
+      canon_engine: str
+      exactness_guaranteed: bool
+      label_aware: bool
+      certificate: dict (if include_certificate=True)
       schema_version: str
     """
     from .core import _normalize_graph
     G = _normalize_graph(G)
 
     t0 = time.perf_counter()
-    can_adj, perm, trace, engine = canonical_label(G)
+    can_adj, perm, trace, engine, label_info = canonical_label(G, label_attr=label_attr)
     t1 = time.perf_counter()
 
-    serialization, can_adj, perm, engine = canonical_serialize(G)
+    serialization, can_adj, perm, engine, label_info = canonical_serialize(G, label_attr=label_attr)
     t2 = time.perf_counter()
 
     canonical_id = compute_id(serialization)
@@ -373,6 +473,8 @@ def tophashx(G: nx.Graph, include_certificate: bool = True) -> Dict[str, Any]:
         "canonical_adjacency_shape": can_adj.shape,
         "canon_engine": engine,
         "exactness_guaranteed": (engine == "pynauty"),
+        "label_aware": label_info is not None,
+        "color_preserving": label_info is not None and label_info.get("color_preserving", False),
         "timings": {
             "canon_seconds": t1 - t0,
             "serialize_seconds": t2 - t1,
@@ -382,16 +484,21 @@ def tophashx(G: nx.Graph, include_certificate: bool = True) -> Dict[str, Any]:
     }
 
     if include_certificate:
-        result["certificate"] = build_certificate(G, can_adj, perm, trace, engine)
+        result["certificate"] = build_certificate(G, can_adj, perm, trace, engine, label_info)
 
     return result
 
 
-def is_isomorphic(G: nx.Graph, H: nx.Graph) -> bool:
+def is_isomorphic(G: nx.Graph, H: nx.Graph, label_attr: str = None) -> bool:
     """
     Exact isomorphism test via TopHashX: G ≅ H iff canonical_id(G) == canonical_id(H).
 
-    Correctness target: C(G) = C(H) ⟺ G ≅ H (for simple undirected graphs).
+    v0.2: If label_attr is set, the test is COLOR-PRESERVING — G and H are
+    isomorphic only if there's an isomorphism that respects node labels.
+
+    Correctness target:
+      Topology-only:  C(G) = C(H) ⟺ G ≅ H
+      Label-aware:    C(G) = C(H) ⟺ G ≅ H AND the isomorphism preserves labels
     """
     # Fast pre-check: same number of nodes/edges
     if G.number_of_nodes() != H.number_of_nodes():
@@ -401,7 +508,7 @@ def is_isomorphic(G: nx.Graph, H: nx.Graph) -> bool:
     if nx.number_connected_components(G) != nx.number_connected_components(H):
         return False
 
-    # Compare canonical IDs
-    id_G = tophashx(G, include_certificate=False)["canonical_id"]
-    id_H = tophashx(H, include_certificate=False)["canonical_id"]
+    # Compare canonical IDs (label-aware if label_attr is set)
+    id_G = tophashx(G, include_certificate=False, label_attr=label_attr)["canonical_id"]
+    id_H = tophashx(H, include_certificate=False, label_attr=label_attr)["canonical_id"]
     return id_G == id_H

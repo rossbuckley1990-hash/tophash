@@ -35,9 +35,16 @@ SPARSE_THRESHOLD = 200
 MAX_LANDMARKS = 80
 
 
-def compute_persistence_view(G: nx.Graph, max_dim: int = 1) -> np.ndarray:
+def compute_persistence_view(G: nx.Graph, max_dim: int = 1, label_attr: str = None) -> np.ndarray:
     """
     Compute the 20-dimensional persistence view of a graph.
+
+    v0.2: If label_attr is set, the persistence computation uses a LABEL-CONDITIONED
+    metric. The distance matrix is perturbed by label differences:
+      D'[i,j] = D[i,j] + alpha * |label_height(i) - label_height(j)|
+    where label_height is a deterministic integer mapping of labels (sorted order).
+    This means nodes with different labels are "farther apart" in the filtration,
+    so the persistent homology captures label-aware topological structure.
 
     For graphs with n <= SPARSE_THRESHOLD nodes: exact dense computation.
     For larger graphs: landmark-based approximation via farthest-first sampling.
@@ -52,13 +59,15 @@ def compute_persistence_view(G: nx.Graph, max_dim: int = 1) -> np.ndarray:
     n = len(nodes)
 
     if n <= SPARSE_THRESHOLD:
-        # Dense exact computation
         D = _dense_shortest_path(G, nodes)
-        dgms = _compute_ripser(D, max_dim, n)
     else:
-        # Landmark-based approximation
         D, landmark_count = _landmark_distance_matrix(G, nodes)
-        dgms = _compute_ripser(D, max_dim, landmark_count)
+
+    # v0.2: Label-conditioned metric perturbation
+    if label_attr is not None:
+        D = _perturb_by_labels(D, G, nodes, label_attr)
+
+    dgms = _compute_ripser(D, max_dim, n)
 
     h0 = dgms[0] if len(dgms) > 0 else np.zeros((0, 2))
     h1 = dgms[1] if len(dgms) > 1 else np.zeros((0, 2))
@@ -67,6 +76,40 @@ def compute_persistence_view(G: nx.Graph, max_dim: int = 1) -> np.ndarray:
         _summarize_diagram(h0, dim=0, n=n),
         _summarize_diagram(h1, dim=1, n=n),
     ])
+
+
+def _perturb_by_labels(D: np.ndarray, G: nx.Graph, nodes: list, label_attr: str,
+                        alpha: float = 0.5) -> np.ndarray:
+    """
+    Perturb the distance matrix by label differences.
+
+    D'[i,j] = D[i,j] + alpha * |label_height(i) - label_height(j)|
+
+    where label_height maps each unique label to a deterministic integer
+    (sorted order of label strings). This is the label-conditioned filtration:
+    nodes with different labels are farther apart, so persistent homology
+    captures label-aware topological structure.
+
+    The alpha parameter controls the strength of the label perturbation.
+    alpha=0.5 means a label difference of 1 adds 0.5 to the distance —
+    enough to separate label classes without overwhelming the topology.
+    """
+    # Extract labels and map to deterministic integer heights
+    labels = []
+    for node in nodes:
+        label = G.nodes[node].get(label_attr)
+        labels.append(str(label) if label is not None else "__unlabeled__")
+
+    unique_labels = sorted(set(labels))
+    label_to_height = {label: i for i, label in enumerate(unique_labels)}
+    heights = np.array([label_to_height[l] for l in labels], dtype=float)
+
+    # Build label-perturbed distance matrix
+    n = len(nodes)
+    height_diff = np.abs(heights.reshape(-1, 1) - heights.reshape(1, -1))
+    D_perturbed = D + alpha * height_diff
+
+    return D_perturbed
 
 
 def _dense_shortest_path(G: nx.Graph, nodes: list) -> np.ndarray:

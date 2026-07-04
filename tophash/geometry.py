@@ -19,8 +19,18 @@ import numpy as np
 import networkx as nx
 
 
-def compute_geometry_view(G: nx.Graph) -> np.ndarray:
-    """Compute the 10D geometry view of a graph."""
+def compute_geometry_view(G: nx.Graph, label_attr: str = None) -> np.ndarray:
+    """
+    Compute the 10D geometry view of a graph.
+
+    v0.2: If label_attr is set, the geometry view replaces the 4-path motif
+    proxy (dim 10) and assortativity (dim 9) with label-aware features:
+      9. Label homophily (fraction of edges with same-label endpoints)
+      10. Label diversity (number of distinct labels / n)
+
+    This makes the geometry view label-aware: two graphs with the same topology
+    but different label assignments produce different geometry vectors.
+    """
     n = G.number_of_nodes()
     m = G.number_of_edges()
     if n == 0:
@@ -69,30 +79,49 @@ def compute_geometry_view(G: nx.Graph) -> np.ndarray:
     # Density
     density = float(nx.density(G))
 
-    # Assortativity
-    try:
-        assort = float(nx.degree_assortativity_coefficient(G))
-        if not np.isfinite(assort):
-            assort = 0.0
-    except Exception:
-        assort = 0.0
+    # v0.2: Label-aware geometry features (replace assortativity + motif proxy)
+    if label_attr is not None:
+        # Label homophily: fraction of edges with same-label endpoints
+        same_label_edges = 0
+        total_edges = 0
+        for u, v in G.edges():
+            label_u = G.nodes[u].get(label_attr)
+            label_v = G.nodes[v].get(label_attr)
+            total_edges += 1
+            if str(label_u) == str(label_v):
+                same_label_edges += 1
+        label_homophily = float(same_label_edges / max(total_edges, 1))
 
-    # 4-path motif count (number of paths of length 4)
-    # Approximation: trace(A^5) gives closed walks of length 5 (related to 4-paths + triangles)
-    # We use a simpler proxy: number of edges between high-degree nodes
-    try:
-        A = nx.to_numpy_array(G, nodelist=sorted(G.nodes()), dtype=float)
-        # Number of 3-paths ≈ trace(A^4) / 2 - related to higher-order structure
-        if A.shape[0] <= 500:
-            A4 = np.linalg.matrix_power(A, 4)
-            motif_count = float(np.trace(A4))
-            # Normalize
-            motif_norm = motif_count / max(n * (n - 1) * (n - 2) * (n - 3), 1)
-        else:
-            # For large graphs, use degree-based proxy
-            motif_norm = float(np.mean(degrees ** 2) / max(n, 1))
-    except Exception:
-        motif_norm = 0.0
+        # Label diversity: number of distinct labels / n
+        labels = set()
+        for node in G.nodes():
+            label = G.nodes[node].get(label_attr)
+            labels.add(str(label) if label is not None else "__unlabeled__")
+        label_diversity = float(len(labels) / max(n, 1))
+
+        assort = label_homophily  # dim 9: label homophily
+        motif_norm = label_diversity  # dim 10: label diversity
+    else:
+        # Topology-only mode (backward compatible with v0.1)
+        # Assortativity
+        try:
+            assort = float(nx.degree_assortativity_coefficient(G))
+            if not np.isfinite(assort):
+                assort = 0.0
+        except Exception:
+            assort = 0.0
+
+        # 4-path motif count proxy
+        try:
+            A = nx.to_numpy_array(G, nodelist=sorted(G.nodes()), dtype=float)
+            if A.shape[0] <= 500:
+                A4 = np.linalg.matrix_power(A, 4)
+                motif_count = float(np.trace(A4))
+                motif_norm = motif_count / max(n * (n - 1) * (n - 2) * (n - 3), 1)
+            else:
+                motif_norm = float(np.mean(degrees ** 2) / max(n, 1))
+        except Exception:
+            motif_norm = 0.0
 
     result = np.array([
         mean_deg, std_deg, max_deg, clustering, tri_norm,

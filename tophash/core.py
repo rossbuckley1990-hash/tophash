@@ -29,16 +29,29 @@ SCHEMA_VERSION = "tophash-v3-1.0.0"
 TOPHASH_V3_DIM = 52
 
 
-def compute(G: nx.Graph) -> np.ndarray:
+def compute(G: nx.Graph, label_attr: str = None) -> np.ndarray:
     """
     Compute the 52-dimensional TopHash v3 fingerprint of graph G.
 
     Deterministic, training-free. Same input graph always produces same output.
 
+    v0.2: If label_attr is set, the fingerprint is LABEL-AWARE.
+    - Persistence view uses label-conditioned filtration (label-perturbed metric)
+    - Spectral view uses label-aware weighted Laplacian
+    - Geometry view includes label homophily and diversity features
+    
+    Two graphs with the same topology but different labels produce DIFFERENT
+    fingerprints when label_attr is set. With label_attr=None (default), the
+    fingerprint is topology-only (backward compatible with v0.1).
+
     Parameters
     ----------
     G : networkx.Graph
         Simple undirected graph. Self-loops will be ignored.
+        Nodes may have a `label_attr` attribute for label-aware mode.
+    label_attr : str, optional
+        If set, enable label-aware fingerprint computation.
+        Default None = topology-only.
 
     Returns
     -------
@@ -52,10 +65,10 @@ def compute(G: nx.Graph) -> np.ndarray:
     if n == 0:
         return np.zeros(TOPHASH_V3_DIM)
 
-    # Compute the three views
-    v_pers = compute_persistence_view(G)
-    v_spec = compute_spectral_view(G)
-    v_geom = compute_geometry_view(G)
+    # Compute the three views (label-aware if label_attr is set)
+    v_pers = compute_persistence_view(G, label_attr=label_attr)
+    v_spec = compute_spectral_view(G, label_attr=label_attr)
+    v_geom = compute_geometry_view(G, label_attr=label_attr)
 
     # Compute per-view quality scores
     q_pers = persistence_quality(v_pers)
@@ -83,15 +96,20 @@ def compute(G: nx.Graph) -> np.ndarray:
     return fingerprint
 
 
-def explain(G: nx.Graph) -> Dict[str, Any]:
+def explain(G: nx.Graph, label_attr: str = None) -> Dict[str, Any]:
     """
     Compute the TopHash v3 fingerprint and return a full explanation dict
     suitable for audit, debugging, and product UX.
+
+    v0.2: If label_attr is set, the explanation records that the fingerprint
+    is label-aware and which label attribute was used.
 
     Returns
     -------
     dict with keys:
       schema_version: str
+      label_aware: bool
+      label_attr: str (or None)
       n_nodes: int
       n_edges: int
       n_components: int
@@ -108,9 +126,9 @@ def explain(G: nx.Graph) -> Dict[str, Any]:
     m = G.number_of_edges()
     n_cc = nx.number_connected_components(G)
 
-    v_pers = compute_persistence_view(G)
-    v_spec = compute_spectral_view(G)
-    v_geom = compute_geometry_view(G)
+    v_pers = compute_persistence_view(G, label_attr=label_attr)
+    v_spec = compute_spectral_view(G, label_attr=label_attr)
+    v_geom = compute_geometry_view(G, label_attr=label_attr)
 
     q_pers = persistence_quality(v_pers)
     q_spec = spectral_quality(v_spec)
@@ -124,6 +142,8 @@ def explain(G: nx.Graph) -> Dict[str, Any]:
 
     return {
         "schema_version": SCHEMA_VERSION,
+        "label_aware": label_attr is not None,
+        "label_attr": label_attr,
         "n_nodes": n,
         "n_edges": m,
         "n_components": n_cc,
