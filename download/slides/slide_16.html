@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TopHash — Team, Traction & The Ask</title>
+<link rel="stylesheet" href="global.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .h1-closing {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--primary);
+    max-width: 1000px;
+  }
+  .block-header {
+    font-family: var(--font-num);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border: 1px solid rgba(124,92,255,0.4);
+    border-radius: 999px;
+    background: rgba(124,92,255,0.08);
+  }
+  .block {
+    background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.005));
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    padding: 22px 22px;
+    height: 360px;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Block 1 — Traction */
+  .stat-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-num {
+    font-family: var(--font-num);
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    min-width: 64px;
+  }
+  .stat-label {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: var(--primary-dim);
+    flex: 1;
+  }
+  /* Block 2 — Team */
+  .team-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .team-row:last-child { border-bottom: none; }
+  .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 16px;
+    color: #0A0E1A;
+    flex-shrink: 0;
+    box-shadow: 0 0 18px rgba(124,92,255,0.35);
+  }
+  .avatar.advisor {
+    background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent-3) 100%);
+    box-shadow: 0 0 18px rgba(77,217,255,0.25);
+  }
+  .team-name {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--primary);
+    line-height: 1.2;
+    letter-spacing: -0.005em;
+  }
+  .team-role {
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--primary-dim);
+    margin-top: 2px;
+  }
+  /* Block 3 — The Ask */
+  .ask-stat {
+    font-family: var(--font-num);
+    font-weight: 600;
+    font-size: 68px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-top: 4px;
+  }
+  .ask-sub {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    color: var(--primary-dim);
+    margin-top: 8px;
+    letter-spacing: 0.02em;
+  }
+  .uof-label {
+    font-family: var(--font-num);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 18px;
+    margin-bottom: 10px;
+  }
+  .uof-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .uof-row:last-child { border-bottom: none; }
+  .uof-pct {
+    font-family: var(--font-num);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--accent-2);
+    min-width: 38px;
+  }
+  .uof-text {
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--primary-dim);
+    flex: 1;
+  }
+  .closing-strip {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.4;
+    color: var(--primary);
+    text-align: center;
+  }
+  .closing-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--accent);
+    display: inline-block;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- Page meta header -->
+  <div class="page-meta">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span>TOPHASH</span>
+    </div>
+    <div>04 / 04 — THE BUSINESS</div>
+  </div>
+
+  <!-- Header -->
+  <div style="margin-top: 22px;">
+    <div class="eyebrow" style="margin-bottom: 12px;">TEAM · TRACTION · THE ASK</div>
+    <h1 class="h1-closing">TopHash is the structural identity layer for the AI era — and the next $1B+ primitive company.</h1>
+    <hr class="accent-line" style="margin-top: 16px; margin-bottom: 0;">
+  </div>
+
+  <!-- Three blocks -->
+  <div class="grid grid-cols-3 gap-6" style="margin-top: 22px;">
+
+    <!-- BLOCK 1 — Traction -->
+    <div class="block">
+      <div class="block-header">TRACTION</div>
+
+      <div class="stat-row">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Design partners in private beta (cybersecurity, pharma, fintech)</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Signed LOIs for TopHashX Cloud (ACV $250K avg)</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-num">2</div>
+        <div class="stat-label">Published benchmarks beating WL kernel + GNN baselines on MUTAG, PROTEINS, NCI1</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-num">11</div>
+        <div class="stat-label">Theorem families integrated into Ω∞ reference implementation</div>
+      </div>
+    </div>
+
+    <!-- BLOCK 2 — Team -->
+    <div class="block">
+      <div class="block-header">TEAM</div>
+
+      <div class="team-row">
+        <div class="avatar">AV</div>
+        <div>
+          <div class="team-name">Dr. A. Vega</div>
+          <div class="team-role">Co-founder &amp; CEO. Ex-DeepMind, PhD algebraic topology (Oxford).</div>
+        </div>
+      </div>
+      <div class="team-row">
+        <div class="avatar">MC</div>
+        <div>
+          <div class="team-name">M. Chen</div>
+          <div class="team-role">Co-founder &amp; CTO. Ex-Stripe, distributed systems &amp; data infra.</div>
+        </div>
+      </div>
+      <div class="team-row">
+        <div class="avatar">JO</div>
+        <div>
+          <div class="team-name">J. Okafor</div>
+          <div class="team-role">Chief Mathematician. PhD algebraic topology (Oxford), ex-NSA research.</div>
+        </div>
+      </div>
+      <div class="team-row">
+        <div class="avatar advisor">★</div>
+        <div>
+          <div class="team-name">Advisors</div>
+          <div class="team-role">Former CISO of F50 bank · Former Head of Drug Discovery, top-3 pharma.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOCK 3 — The Ask -->
+    <div class="block">
+      <div class="block-header">THE ASK</div>
+
+      <div class="ask-stat">$20M</div>
+      <div class="ask-sub">Series A · $120M post-money</div>
+      <hr class="accent-line" style="margin-top: 14px; margin-bottom: 0; width: 40px;">
+
+      <div class="uof-label">USE OF FUNDS</div>
+
+      <div class="uof-row">
+        <div class="uof-pct">50%</div>
+        <div class="uof-text">Engineering: exact-mode GA, Ω∞ research, infra scale.</div>
+      </div>
+      <div class="uof-row">
+        <div class="uof-pct">30%</div>
+        <div class="uof-text">GTM: enterprise sales, design-partner success.</div>
+      </div>
+      <div class="uof-row">
+        <div class="uof-pct">20%</div>
+        <div class="uof-text">Research &amp; IP: theorem-stack publications, patents.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Closing strip -->
+  <div style="margin-top: 22px; text-align: center;">
+    <span class="closing-dot"></span>
+    <span class="closing-strip">24-month runway to $5M ARR, 25 paying enterprise logos, and Ω∞ v1 GA.</span>
+  </div>
+
+  <!-- Foot -->
+  <div class="foot">
+    <div>CONTACT · founders@tophash.io · tophash.io</div>
+    <div class="page-num">16 / 16</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    <ul>
+      <li>Close with conviction — this is a primitive company, not a feature.</li>
+      <li>Team lineage is the proof: ex-DeepMind (CEO), ex-Stripe (CTO), ex-NSA research (Chief Mathematician).</li>
+      <li>Advisors open beachhead doors — F50 bank CISO + top-3 pharma drug-discovery lead.</li>
+      <li>$20M Series A buys 24-month runway to $5M ARR and 25 enterprise logos.</li>
+      <li>End the meeting with the ask — schedule the next conversation before closing the deck.</li>
+    </ul>
+  </aside>
+</div>
+</body>
+</html>

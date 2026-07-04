@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Theorem Stack — 11 Mathematical Guarantees</title>
+<link rel="stylesheet" href="global.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 116px;
+    gap: 14px;
+    margin-top: 22px;
+  }
+  .theorem-cell {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .theorem-idx {
+    font-family: var(--font-num);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .theorem-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary);
+    line-height: 1.2;
+    margin-top: 8px;
+  }
+  .theorem-role {
+    font-size: 12px;
+    color: var(--primary-dim);
+    line-height: 1.4;
+    margin-top: 6px;
+  }
+  .summary-cell {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  .summary-label {
+    font-family: var(--font-num);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    line-height: 1;
+  }
+  .summary-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-top: 8px;
+    line-height: 1.25;
+  }
+  .summary-desc {
+    font-size: 11.5px;
+    color: var(--primary-dim);
+    line-height: 1.45;
+    margin-top: 6px;
+  }
+  .callout-bar {
+    text-align: center;
+    margin-top: 18px;
+    font-family: var(--font-num);
+    font-size: 13px;
+    color: var(--accent-2);
+    letter-spacing: 0.06em;
+  }
+</style>
+</head>
+<body>
+<section class="slide">
+  <div class="page-meta">
+    <div class="brand"><span class="brand-dot"></span><span>TOPHASH</span></div>
+    <div class="page-num">THE MATHEMATICAL MOAT</div>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <div class="eyebrow">THE MATHEMATICAL MOAT</div>
+    <h1 style="font-size: 44px; line-height: 1.12; font-weight: 700; margin: 14px 0 0 0; max-width: 1100px; letter-spacing: -0.015em;">
+      Every certificate rests on a named theorem — <span class="text-grad-accent">not a learned approximation.</span>
+    </h1>
+    <hr class="accent-line" style="margin-top: 22px;">
+  </div>
+
+  <div class="bento">
+    <div class="card theorem-cell">
+      <div class="theorem-idx">01</div>
+      <div class="theorem-name">Persistence / Bottleneck Stability</div>
+      <div class="theorem-role">Lipschitz bounds on topological summaries under bounded perturbation.</div>
+    </div>
+    <div class="card theorem-cell">
+      <div class="theorem-idx">02</div>
+      <div class="theorem-name">Interleaving Distance</div>
+      <div class="theorem-role">Module-level deformation distance, not just diagram-level.</div>
+    </div>
+    <div class="card theorem-cell">
+      <div class="theorem-idx">03</div>
+      <div class="theorem-name">Gromov–Hausdorff Stability</div>
+      <div class="theorem-role">Universal cross-domain metric-measure comparison.</div>
+    </div>
+    <div class="card theorem-cell">
+      <div class="theorem-idx">04</div>
+      <div class="theorem-name">Cheeger Inequalities</div>
+      <div class="theorem-role">Spectral shifts ↔ true structural bottlenecks.</div>
+    </div>
+
+    <div class="card theorem-cell">
+      <div class="theorem-idx">05</div>
+      <div class="theorem-name">Davis–Kahan Perturbation</div>
+      <div class="theorem-role">Eigenvalue drift vs. eigenspace rotation separated.</div>
+    </div>
+    <div class="card theorem-cell">
+      <div class="theorem-idx">06</div>
+      <div class="theorem-name">Eigenvalue Interlacing</div>
+      <div class="theorem-role">Local edits → constrained global spectral movement.</div>
+    </div>
+    <div class="card theorem-cell">
+      <div class="theorem-idx">07</div>
+      <div class="theorem-name">Discrete Morse Theory</div>
+      <div class="theorem-role">Critical edits, saddles, topological event structure.</div>
+    </div>
+    <div class="card theorem-cell">
+      <div class="theorem-idx">08</div>
+      <div class="theorem-name">Conley Index / Morse Decomposition</div>
+      <div class="theorem-role">Invariant basins, attractors, regime transition graphs.</div>
+    </div>
+
+    <div class="card theorem-cell">
+      <div class="theorem-idx">09</div>
+      <div class="theorem-name">Optimal Transport / Kantorovich</div>
+      <div class="theorem-role">Geometry over response distributions, not flat vectors.</div>
+    </div>
+    <div class="card theorem-cell">
+      <div class="theorem-idx">10</div>
+      <div class="theorem-name">Graphon Compactness</div>
+      <div class="theorem-role">Family-level asymptotic invariants, not just per-instance.</div>
+    </div>
+    <div class="card theorem-cell">
+      <div class="theorem-idx">11</div>
+      <div class="theorem-name">Equivariant Persistence</div>
+      <div class="theorem-role">Symmetry-aware — factors out benign relabelings.</div>
+    </div>
+    <div class="card-elev summary-cell">
+      <div class="summary-label">WHAT THIS BUYS</div>
+      <div class="summary-title">Auditable · Reproducible · Honest.</div>
+      <div class="summary-desc">Every certificate carries its admissibility assumptions. Independent implementations can replay every proof. No black-box drift, ever.</div>
+    </div>
+  </div>
+
+  <div class="callout-bar">
+    Auditable by independent implementations.&nbsp;&nbsp;Reproducible across machines.&nbsp;&nbsp;Honest about admissibility assumptions.
+  </div>
+
+  <div class="foot">
+    <span>THE MATHEMATICAL MOAT</span>
+    <span>11 / 16</span>
+  </div>
+
+  <aside data-notes class="hidden">
+    - This is the IP — 11 named theorems across topology, spectral graph theory, dynamical systems, and optimal transport.
+    - Regulators and certifiers accept named theorems because the assumptions are explicit and replayable.
+    - ML-based competitors cannot catch up: their "guarantees" are empirical and degrade under distribution shift.
+    - Each theorem is a defensive trench — even if one fails, the others still anchor a certificate.
+    - The 12th cell is the commercial promise: auditable, reproducible, honest — three things ML embeddings cannot be.
+  </aside>
+</section>
+</body>
+</html>

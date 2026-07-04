@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TopHash — TAM & Beachheads</title>
+<link rel="stylesheet" href="global.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .h1-tam {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--primary);
+    max-width: 760px;
+  }
+  .tam-callout-label {
+    font-family: var(--font-num);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--primary-mute);
+    text-align: right;
+  }
+  .tam-callout-stat {
+    font-family: var(--font-num);
+    font-weight: 600;
+    font-size: 52px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-align: right;
+  }
+  .wedge-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.005));
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    padding: 18px 16px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    height: 268px;
+    position: relative;
+    overflow: hidden;
+  }
+  .wedge-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent 90%);
+    opacity: 0.5;
+  }
+  .wedge-label {
+    font-family: var(--font-num);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .wedge-name {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.15;
+    color: var(--primary);
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+  }
+  .wedge-tam {
+    font-family: var(--font-num);
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 12px;
+  }
+  .wedge-icp {
+    font-family: var(--font-body);
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--primary-dim);
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .wedge-product {
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--primary-dim);
+    flex: 1;
+  }
+  .wedge-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-num);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 4px 9px;
+    border: 1px solid rgba(124,92,255,0.4);
+    border-radius: 999px;
+    color: var(--accent);
+    background: rgba(124,92,255,0.08);
+    margin-top: 10px;
+    align-self: flex-start;
+  }
+  .closing-strip {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--primary);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- Page meta header -->
+  <div class="page-meta">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span>TOPHASH</span>
+    </div>
+    <div>03 / 04 — THE MARKET</div>
+  </div>
+
+  <!-- Header row: eyebrow + H1 + accent line (left), TAM callout (right) -->
+  <div class="flex items-start justify-between" style="margin-top: 22px;">
+    <div style="max-width: 760px;">
+      <div class="eyebrow" style="margin-bottom: 12px;">MARKET SIZING</div>
+      <h1 class="h1-tam">A horizontal primitive with five $1B+ beachheads.</h1>
+      <hr class="accent-line" style="margin-top: 18px; margin-bottom: 0;">
+    </div>
+    <div style="text-align: right; padding-top: 6px;">
+      <div class="tam-callout-label">TOTAL ADDRESSABLE MARKET BY 2028</div>
+      <div class="tam-callout-stat" style="margin-top: 8px;">$80B+</div>
+    </div>
+  </div>
+
+  <!-- 5-card grid -->
+  <div class="grid grid-cols-5 gap-3" style="margin-top: 22px;">
+
+    <!-- Card 1: Cybersecurity -->
+    <div class="wedge-card">
+      <div class="wedge-label">CYBERSECURITY</div>
+      <div class="wedge-name">Software Supply-Chain</div>
+      <div class="wedge-tam">$12B</div>
+      <div class="wedge-icp">F500 CISOs, federal agencies</div>
+      <div class="wedge-product">TopHashX proof-grade SBOM identity, binary graph attestation, zero-trust structural certificates.</div>
+      <div class="wedge-chip">TOPHASHX</div>
+    </div>
+
+    <!-- Card 2: Drug Discovery -->
+    <div class="wedge-card">
+      <div class="wedge-label">DRUG DISCOVERY</div>
+      <div class="wedge-name">Molecular Graph Search</div>
+      <div class="wedge-tam">$18B</div>
+      <div class="wedge-icp">Top-20 pharma, biotech</div>
+      <div class="wedge-product">v3 molecular similarity search at scale, Ω∞ ADMET perturbation, structural IP filing.</div>
+      <div class="wedge-chip">TOPHASH Ω∞</div>
+    </div>
+
+    <!-- Card 3: AI Supply Chain -->
+    <div class="wedge-card">
+      <div class="wedge-label">AI SUPPLY CHAIN</div>
+      <div class="wedge-name">Model & Dataset Identity</div>
+      <div class="wedge-tam">$9B</div>
+      <div class="wedge-icp">AI labs, regulators, hyperscalers</div>
+      <div class="wedge-product">AI BOM, model provenance attestation, dataset structural fingerprints.</div>
+      <div class="wedge-chip">TOPHASHX</div>
+    </div>
+
+    <!-- Card 4: Financial Fraud -->
+    <div class="wedge-card">
+      <div class="wedge-label">FINANCIAL FRAUD</div>
+      <div class="wedge-name">Transaction-Graph Anomaly</div>
+      <div class="wedge-tam">$14B</div>
+      <div class="wedge-icp">Banks, fintechs, payment networks</div>
+      <div class="wedge-product">Real-time fraud-ring detection, counterparty structural identity, Ω∞ regime-change alerts.</div>
+      <div class="wedge-chip">TOPHASH Ω∞</div>
+    </div>
+
+    <!-- Card 5: Data Infrastructure -->
+    <div class="wedge-card">
+      <div class="wedge-label">DATA INFRASTRUCTURE</div>
+      <div class="wedge-name">Structural Indexing Layer</div>
+      <div class="wedge-tam">$27B</div>
+      <div class="wedge-icp">Graph DBs, lakehouses, vector DBs</div>
+      <div class="wedge-product">TopHash v3 as the missing structural layer — ANN over graphs natively.</div>
+      <div class="wedge-chip">TOPHASH v3</div>
+    </div>
+
+  </div>
+
+  <!-- Bottom callout strip -->
+  <div class="card-elev" style="margin-top: 18px; padding: 14px 22px;">
+    <p class="closing-strip">Each beachhead is independently a $1B+ ARR outcome. Together, they compound into a platform.</p>
+  </div>
+
+  <!-- Foot -->
+  <div class="foot">
+    <div>THE MARKET</div>
+    <div class="page-num">13 / 16</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    <ul>
+      <li>Beachhead #1 is cybersecurity + #2 is drug discovery — most acute pain, highest willingness to pay.</li>
+      <li>Data infrastructure ($27B) is the long-term platform play — TopHash v3 becomes a native graph index.</li>
+      <li>TAM is conservative — excludes adjacencies like compliance automation and ML observability.</li>
+      <li>Each wedge has a dedicated wedge-leader product layer (TopHashX, Ω∞, or v3).</li>
+      <li>Five wedges, one engine — every customer funds the same core, compounding across domains.</li>
+    </ul>
+  </aside>
+</div>
+</body>
+</html>

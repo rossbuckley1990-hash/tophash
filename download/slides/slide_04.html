@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TopHash — The Cost</title>
+  <link rel="stylesheet" href="global.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div class="slide">
+    <!-- Page meta -->
+    <div class="page-meta">
+      <div class="brand">
+        <div class="brand-dot"></div>
+        <span>TOPHASH</span>
+      </div>
+      <div class="page-num">01 / 04 — THE THESIS</div>
+    </div>
+
+    <!-- Main content -->
+    <div style="position:absolute; left:64px; right:64px; top:80px; bottom:60px; z-index:1; display:flex; flex-direction:column;">
+      <div class="eyebrow" style="margin-bottom:14px;">THE COST</div>
+      <h1 style="font-family:var(--font-heading); font-size:42px; font-weight:700; line-height:1.15; margin:0 0 18px 0; color:var(--primary); letter-spacing:-0.022em; max-width:1100px;">Every industry pays a structural opacity tax — in security, fraud, science, and time.</h1>
+      <hr class="accent-line">
+
+      <!-- 4-card stat grid (equal width) -->
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-top:24px;">
+        <!-- Card 1 -->
+        <div class="card" style="padding:22px; min-height:236px; display:flex; flex-direction:column;">
+          <div style="font-family:var(--font-num); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--primary-mute); margin-bottom:14px; font-weight:500;">CYBERSECURITY</div>
+          <div class="num text-grad-accent" style="font-size:64px; font-weight:600; line-height:1; margin-bottom:14px; letter-spacing:-0.025em;">$4.45M</div>
+          <div style="font-size:15px; font-weight:600; color:var(--primary); margin-bottom:8px; line-height:1.3;">avg cost per data breach</div>
+          <div style="font-size:13px; color:var(--primary-dim); line-height:1.5;">IBM Cost of a Data Breach Report, 2024 — up 10% YoY.</div>
+        </div>
+        <!-- Card 2 -->
+        <div class="card" style="padding:22px; min-height:236px; display:flex; flex-direction:column;">
+          <div style="font-family:var(--font-num); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--primary-mute); margin-bottom:14px; font-weight:500;">FINANCIAL FRAUD</div>
+          <div class="num text-grad-accent" style="font-size:64px; font-weight:600; line-height:1; margin-bottom:14px; letter-spacing:-0.025em;">$780K</div>
+          <div style="font-size:15px; font-weight:600; color:var(--primary); margin-bottom:8px; line-height:1.3;">annual fraud loss per F1000 firm</div>
+          <div style="font-size:13px; color:var(--primary-dim); line-height:1.5;">AFCC 2024 — transaction-graph detection still signature-based.</div>
+        </div>
+        <!-- Card 3 -->
+        <div class="card" style="padding:22px; min-height:236px; display:flex; flex-direction:column;">
+          <div style="font-family:var(--font-num); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--primary-mute); margin-bottom:14px; font-weight:500;">DRUG DISCOVERY</div>
+          <div class="num text-grad-accent" style="font-size:64px; font-weight:600; line-height:1; margin-bottom:14px; letter-spacing:-0.025em;">$2.6B</div>
+          <div style="font-size:15px; font-weight:600; color:var(--primary); margin-bottom:8px; line-height:1.3;">cost per approved molecule</div>
+          <div style="font-size:13px; color:var(--primary-dim); line-height:1.5;">DiMasi et al. — 90% of candidates fail in Phase I-II trials.</div>
+        </div>
+        <!-- Card 4 -->
+        <div class="card" style="padding:22px; min-height:236px; display:flex; flex-direction:column;">
+          <div style="font-family:var(--font-num); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--primary-mute); margin-bottom:14px; font-weight:500;">SOFTWARE SUPPLY CHAIN</div>
+          <div class="num text-grad-accent" style="font-size:64px; font-weight:600; line-height:1; margin-bottom:14px; letter-spacing:-0.025em;">12 mo</div>
+          <div style="font-size:15px; font-weight:600; color:var(--primary); margin-bottom:8px; line-height:1.3;">average SBOM drift per enterprise</div>
+          <div style="font-size:13px; color:var(--primary-dim); line-height:1.5;">Endor Labs 2024 — 51% of dependencies change quarterly.</div>
+        </div>
+      </div>
+
+      <!-- Callout strip: shared root cause -->
+      <div class="card-elev" style="margin-top:22px; padding:16px 24px; display:flex; align-items:center; justify-content:center; gap:18px;">
+        <span style="font-family:var(--font-num); font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--accent); font-weight:600; white-space:nowrap;">SHARED ROOT CAUSE</span>
+        <span data-decor style="width:1px; height:18px; background:var(--line-strong);"></span>
+        <span style="font-family:var(--font-num); font-size:13px; color:var(--primary-dim); letter-spacing:0.04em; line-height:1.5;">Cyber: 4.4M breach cost · Pharma: 90% candidate failure · Finance: 780K fraud loss · AI: model provenance unresolved</span>
+      </div>
+    </div>
+
+    <!-- Foot -->
+    <div class="foot">
+      <span>THE COST</span>
+      <span>04 / 16</span>
+    </div>
+
+    <aside data-notes class="hidden">
+      <ul>
+        <li>These four costs are not isolated — they share a root cause: no structural identity primitive.</li>
+        <li>Cyber and supply chain: signature-based detection cannot prove structural identity.</li>
+        <li>Pharma: molecular graphs are searched brute-force — $2.6B per approved drug.</li>
+        <li>Finance: transaction-graph fraud detection is still pattern matching.</li>
+        <li>TopHash dissolves the tax across all four domains with one primitive.</li>
+      </ul>
+    </aside>
+  </div>
+</body>
+</html>

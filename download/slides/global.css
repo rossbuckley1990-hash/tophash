@@ -1,0 +1,213 @@
+/* TopHash Deck — Dark Tech Premium global stylesheet */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+:root {
+  /* Palette */
+  --bg: #0A0E1A;
+  --bg-elev: #11172A;
+  --bg-elev-2: #1A2240;
+  --primary: #E8ECF4;
+  --primary-dim: #B8BED0;
+  --primary-mute: #6E7691;
+  --accent: #7C5CFF;
+  --accent-2: #4DD9FF;
+  --accent-3: #FF6FB5;
+  --accent-glow: rgba(124, 92, 255, 0.25);
+  --accent-2-glow: rgba(77, 217, 255, 0.18);
+  --line: rgba(232, 236, 244, 0.08);
+  --line-strong: rgba(232, 236, 244, 0.18);
+
+  /* Typography tokens */
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-num: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  --font-serif: 'IBM Plex Serif', Georgia, serif;
+
+  --fs-display: 84px;
+  --fs-h1: 56px;
+  --fs-h2: 40px;
+  --fs-h3: 28px;
+  --fs-body: 17px;
+  --fs-small: 14px;
+  --fs-micro: 11px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.slide {
+  width: 1280px;
+  min-height: 720px;
+  height: 720px;
+  background: var(--bg);
+  color: var(--primary);
+  position: relative;
+  overflow: hidden;
+  padding: 56px 64px;
+  font-family: var(--font-body);
+}
+
+/* Ambient layered backgrounds */
+.slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(800px 500px at 85% -10%, var(--accent-glow), transparent 60%),
+    radial-gradient(600px 400px at -5% 110%, var(--accent-2-glow), transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.slide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: 0 0;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.slide > * { position: relative; z-index: 1; }
+
+/* Page meta header bar (deck name + page number) */
+.page-meta {
+  position: absolute;
+  top: 24px;
+  left: 64px;
+  right: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-num);
+  font-size: var(--fs-micro);
+  color: var(--primary-mute);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  z-index: 2;
+}
+.page-meta .brand { display: flex; align-items: center; gap: 10px; }
+.page-meta .brand-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 2px; box-shadow: 0 0 12px var(--accent); }
+.page-meta .page-num { color: var(--primary-dim); }
+
+/* Typography helpers (tokens only, used inline in slide HTML) */
+.eyebrow {
+  font-family: var(--font-num);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.accent-line {
+  width: 56px; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border: none;
+  margin: 0 0 24px 0;
+}
+
+/* Surfaces */
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  padding: 24px;
+  backdrop-filter: blur(6px);
+}
+.card-elev {
+  background: linear-gradient(180deg, rgba(124,92,255,0.07), rgba(255,255,255,0.01));
+  border: 1px solid rgba(124,92,255,0.22);
+  border-radius: 14px;
+  padding: 24px;
+}
+
+/* Accent chip / pill */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-num);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--primary-dim);
+  background: rgba(255,255,255,0.02);
+}
+.chip-accent {
+  border-color: rgba(124,92,255,0.4);
+  color: var(--accent);
+  background: rgba(124,92,255,0.08);
+}
+
+/* Numeric display */
+.num {
+  font-family: var(--font-num);
+  font-feature-settings: "tnum" 1, "ss01" 1;
+  letter-spacing: -0.01em;
+}
+
+/* Decorative corner glyph */
+.corner-glyph {
+  position: absolute;
+  width: 90px; height: 90px;
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  pointer-events: none;
+}
+.corner-glyph.tl { top: 64px; left: 64px; border-color: transparent; border-top-color: var(--accent); border-left-color: var(--accent); }
+.corner-glyph.br { bottom: 56px; right: 64px; border-color: transparent; border-bottom-color: var(--accent-2); border-right-color: var(--accent-2); }
+
+/* Subtle dotted divider */
+.dot-divider { display: flex; gap: 6px; align-items: center; }
+.dot-divider .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--primary-mute); }
+.dot-divider .dot.on { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+
+/* Hidden speaker notes */
+[data-notes] { display: none; }
+
+/* Utility: gradient text */
+.text-grad {
+  background: linear-gradient(90deg, var(--primary) 0%, var(--accent-2) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-grad-accent {
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Footer microcopy */
+.foot {
+  position: absolute;
+  bottom: 24px;
+  left: 64px;
+  right: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-num);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--primary-mute);
+  z-index: 2;
+}

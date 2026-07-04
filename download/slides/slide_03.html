@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TopHash — The Problem</title>
+  <link rel="stylesheet" href="global.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div class="slide">
+    <!-- Page meta -->
+    <div class="page-meta">
+      <div class="brand">
+        <div class="brand-dot"></div>
+        <span>TOPHASH</span>
+      </div>
+      <div class="page-num">01 / 04 — THE THESIS</div>
+    </div>
+
+    <!-- Two-column layout: left 55% / right 45% with 48px gap -->
+    <div style="position:absolute; left:64px; right:64px; top:88px; bottom:60px; display:grid; grid-template-columns:608px 1fr; gap:48px; z-index:1;">
+      <!-- Left column: problem narrative -->
+      <div style="display:flex; flex-direction:column;">
+        <div class="eyebrow" style="margin-bottom:14px;">THE PROBLEM</div>
+        <h1 style="font-family:var(--font-heading); font-size:54px; font-weight:700; line-height:1.1; margin:0 0 22px 0; color:var(--primary); letter-spacing:-0.025em;">Structure is the dark matter of data — everywhere, unseen, unindexed.</h1>
+        <hr class="accent-line">
+        <p style="font-size:17px; line-height:1.6; color:var(--primary-dim); margin:0 0 22px 0;">Modern data infrastructure hashes bytes, embeds text, and indexes rows. But 80% of enterprise data — software dependency graphs, molecular scaffolds, transaction networks, model architectures — is fundamentally structural. None of it has a native identity primitive. None of it is searchable by shape. None of it is provably attestable.</p>
+        <div style="font-family:var(--font-num); font-size:13px; color:var(--accent-2); padding:14px 18px; border-left:2px solid var(--accent-2); background:rgba(77,217,255,0.06); line-height:1.55; letter-spacing:0.02em;">SHA-256 hashes bytes.&nbsp;&nbsp;Vectors embed text.&nbsp;&nbsp;Nothing fingerprints structure.</div>
+      </div>
+
+      <!-- Right column: three stacked stat cards -->
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="card" style="padding:22px 24px;">
+          <div style="display:flex; align-items:baseline; gap:16px;">
+            <div class="num" style="font-size:52px; font-weight:600; color:var(--accent); line-height:1; letter-spacing:-0.02em;">80%</div>
+            <div style="font-size:14px; color:var(--primary); font-weight:500; flex:1; line-height:1.35;">of enterprise data is relational / graph-structured</div>
+          </div>
+          <div style="font-size:12px; color:var(--primary-mute); margin-top:10px; line-height:1.4;">but treated as flat rows or blobs.</div>
+        </div>
+        <div class="card" style="padding:22px 24px;">
+          <div style="display:flex; align-items:baseline; gap:16px;">
+            <div class="num" style="font-size:52px; font-weight:600; color:var(--accent); line-height:1; letter-spacing:-0.02em;">+40% YoY</div>
+            <div style="font-size:14px; color:var(--primary); font-weight:500; flex:1; line-height:1.35;">growth in software supply-chain attacks</div>
+          </div>
+          <div style="font-size:12px; color:var(--primary-mute); margin-top:10px; line-height:1.4;">SBOMs cannot prove structural identity.</div>
+        </div>
+        <div class="card" style="padding:22px 24px;">
+          <div style="display:flex; align-items:baseline; gap:16px;">
+            <div class="num" style="font-size:52px; font-weight:600; color:var(--accent); line-height:1; letter-spacing:-0.02em;">$2.6B</div>
+            <div style="font-size:14px; color:var(--primary); font-weight:500; flex:1; line-height:1.35;">avg cost per approved drug</div>
+          </div>
+          <div style="font-size:12px; color:var(--primary-mute); margin-top:10px; line-height:1.4;">molecular graph search is still brute-force.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Foot -->
+    <div class="foot">
+      <span>THE PROBLEM</span>
+      <span>03 / 16</span>
+    </div>
+
+    <aside data-notes class="hidden">
+      <ul>
+        <li>Frame: modern infra hashes bytes, embeds text, indexes rows — none of it touches structure.</li>
+        <li>Anchor the three stats: 80% structural, +40% YoY supply-chain, $2.6B per approved drug.</li>
+        <li>Punchline (callout): SHA-256 hashes bytes, vectors embed text, nothing fingerprints structure.</li>
+        <li>Transition: next slide quantifies the opacity tax paid across four industries.</li>
+      </ul>
+    </aside>
+  </div>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Layer 1 — TopHash v3: Training-free Structural Fingerprint</title>
+<link rel="stylesheet" href="global.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .view-card {
+    padding: 24px;
+    height: 286px;
+    display: flex;
+    flex-direction: column;
+  }
+  .view-label {
+    font-family: var(--font-num);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .view-title {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--primary);
+    margin-top: 8px;
+  }
+  .view-stat {
+    font-family: var(--font-num);
+    font-size: 56px;
+    font-weight: 600;
+    line-height: 1;
+    margin-top: 18px;
+    letter-spacing: -0.02em;
+  }
+  .view-bullets {
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .view-bullet {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--primary-dim);
+  }
+  .view-bullet::before {
+    content: '';
+    flex: 0 0 5px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 7px;
+    box-shadow: 0 0 6px var(--accent);
+  }
+  .summary-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 18px;
+  }
+</style>
+</head>
+<body>
+<section class="slide">
+  <div class="page-meta">
+    <div class="brand"><span class="brand-dot"></span><span>TOPHASH</span></div>
+    <div class="page-num">LAYER 01 — TOPHASH v3</div>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <div class="eyebrow">LAYER 01 — TOPHASH v3</div>
+    <h1 style="font-size: 44px; line-height: 1.12; font-weight: 700; margin: 14px 0 0 0; max-width: 1080px; letter-spacing: -0.015em;">
+      A deterministic, training-free fingerprint that <span class="text-grad-accent">fuses three views of structure.</span>
+    </h1>
+    <hr class="accent-line" style="margin-top: 22px;">
+    <p style="font-size: 17px; line-height: 1.55; color: var(--primary-dim); max-width: 980px; margin: 18px 0 0 0;">
+      Each view extracts a complementary signal. A self-tuning engine scores each view quality on the current graph and normalizes weights accordingly. No backprop, no dataset fitting — same input, same fingerprint, forever.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 28px;">
+    <div class="card view-card">
+      <div class="view-label">TOPOLOGICAL VIEW</div>
+      <div class="view-title">Persistence</div>
+      <div class="view-stat text-grad-accent">20D</div>
+      <div class="view-bullets">
+        <div class="view-bullet">Persistent homology across dimensions 0 and 1</div>
+        <div class="view-bullet">Captures connected components, loops, voids</div>
+        <div class="view-bullet">Stable under bounded perturbation</div>
+      </div>
+    </div>
+
+    <div class="card view-card">
+      <div class="view-label">SPECTRAL VIEW</div>
+      <div class="view-title">Spectrum</div>
+      <div class="view-stat text-grad-accent">10D</div>
+      <div class="view-bullets">
+        <div class="view-bullet">Eigenvalues of the graph Laplacian</div>
+        <div class="view-bullet">Cheeger-style bottleneck &amp; conductance signal</div>
+        <div class="view-bullet">Captures global connectivity regime</div>
+      </div>
+    </div>
+
+    <div class="card view-card">
+      <div class="view-label">GEOMETRIC VIEW</div>
+      <div class="view-title">Geometry</div>
+      <div class="view-stat text-grad-accent">10D</div>
+      <div class="view-bullets">
+        <div class="view-bullet">Degree distribution, clustering, path metrics</div>
+        <div class="view-bullet">Triangle counts and motif statistics</div>
+        <div class="view-bullet">Local + global structural shape</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-strip">
+    <span class="chip">+ 6D CROSS TERMS</span>
+    <span class="chip">+ 6D META FEATURES</span>
+    <span class="chip chip-accent">= 52D TOPHASH v3</span>
+    <span class="chip chip-accent">= 156D TOPHASH v3 ENSEMBLE</span>
+  </div>
+
+  <div class="foot">
+    <span>LAYER 01 — TOPHASH v3</span>
+    <span>08 / 16</span>
+  </div>
+
+  <aside data-notes class="hidden">
+    - Training-free is the core differentiator — no dataset, no retraining, no drift.
+    - Self-tuning weights make v3 adaptive across graph families without learned parameters.
+    - The 52D ensemble variant adds coarse resolution for sub-graph similarity at scale.
+    - Three views are mathematically orthogonal, so fusion actually adds signal.
+    - Determinism makes v3 a drop-in replacement for brittle learned embeddings.
+  </aside>
+</section>
+</body>
+</html>

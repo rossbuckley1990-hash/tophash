@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TopHash — One Primitive, Three Layers</title>
+<link rel="stylesheet" href="global.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .layer-card { display: flex; align-items: center; gap: 28px; height: 118px; padding: 20px 24px; }
+  .layer-badge {
+    width: 56px; height: 56px; flex: 0 0 56px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(124,92,255,0.12);
+    border: 1px solid rgba(124,92,255,0.45);
+    border-radius: 12px;
+    box-shadow: 0 0 24px rgba(124,92,255,0.35);
+    font-family: var(--font-num);
+    font-size: 22px; font-weight: 600;
+    color: var(--accent);
+  }
+  .layer-badge.cyan {
+    background: rgba(77,217,255,0.10);
+    border-color: rgba(77,217,255,0.45);
+    box-shadow: 0 0 24px rgba(77,217,255,0.30);
+    color: var(--accent-2);
+    font-size: 20px;
+  }
+  .layer-name { font-size: 22px; font-weight: 600; line-height: 1.2; color: var(--primary); }
+  .layer-role { font-size: 14px; color: var(--primary-dim); margin-top: 6px; line-height: 1.45; }
+  .layer-card.v3 { border-color: rgba(124,92,255,0.32); }
+  .layer-card.omega { border-color: rgba(77,217,255,0.32); }
+</style>
+</head>
+<body>
+<section class="slide">
+  <div class="page-meta">
+    <div class="brand"><span class="brand-dot"></span><span>TOPHASH</span></div>
+    <div class="page-num">THE PRIMITIVE</div>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <div class="eyebrow">THE PRIMITIVE</div>
+    <h1 style="font-size: 44px; line-height: 1.12; font-weight: 700; margin: 14px 0 0 0; max-width: 1100px; letter-spacing: -0.015em;">
+      One primitive. Three layers. <span class="text-grad-accent">Every structured object becomes searchable, identifiable, and provable.</span>
+    </h1>
+    <hr class="accent-line" style="margin-top: 22px;">
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 6px;">
+    <div class="card layer-card v3">
+      <div class="layer-badge">v3</div>
+      <div style="flex: 1; min-width: 0;">
+        <div class="layer-name">TopHash v3 — Approximate Structural Fingerprint</div>
+        <div class="layer-role">Training-free, deterministic, fixed-size. Persistence + spectral + geometry fused via self-tuning quality weights.</div>
+      </div>
+      <div style="display: flex; gap: 8px; flex-shrink: 0;">
+        <span class="chip">52D VECTOR</span>
+        <span class="chip">SEARCHABLE</span>
+        <span class="chip">TRAINING-FREE</span>
+      </div>
+    </div>
+
+    <div class="card layer-card">
+      <div class="layer-badge">X</div>
+      <div style="flex: 1; min-width: 0;">
+        <div class="layer-name">TopHashX — Exact Canonization &amp; Proof</div>
+        <div class="layer-role">Canonical labeling → canonical serialization → SHA-256 structural ID → machine-auditable proof object.</div>
+      </div>
+      <div style="display: flex; gap: 8px; flex-shrink: 0;">
+        <span class="chip">EXACT MODE</span>
+        <span class="chip">PROOF OBJECTS</span>
+        <span class="chip">AUDITABLE</span>
+      </div>
+    </div>
+
+    <div class="card layer-card omega">
+      <div class="layer-badge cyan">Ω∞</div>
+      <div style="flex: 1; min-width: 0;">
+        <div class="layer-name">TopHash Ω∞ — Counterfactual Structural Intelligence</div>
+        <div class="layer-role">Perturbation algebra → response tensor → invariant core / fragility shell → minimal-edit certificates.</div>
+      </div>
+      <div style="display: flex; gap: 8px; flex-shrink: 0;">
+        <span class="chip">COUNTERFACTUAL</span>
+        <span class="chip">REGIME MAPS</span>
+        <span class="chip">THEOREM-BACKED</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 26px; font-family: var(--font-num); font-size: 14px; color: var(--accent-2); letter-spacing: 0.06em;">
+    Approximate for retrieval.&nbsp;&nbsp;Exact for identity.&nbsp;&nbsp;Counterfactual for intelligence.
+  </div>
+
+  <div class="foot">
+    <span>THE PRIMITIVE</span>
+    <span>07 / 16</span>
+  </div>
+
+  <aside data-notes class="hidden">
+    - Three layers compose, they do not compete — each consumes the output of the one before it.
+    - Customers can adopt one layer at a time; v3 alone is a high-margin retrieval product.
+    - Pricing tiers map directly to layers: retrieval, identity, intelligence.
+    - Same primitive, three commercial motions: API, on-prem proof appliance, counterfactual SaaS.
+    - Composition is what makes the moat compounding rather than replaceable.
+  </aside>
+</section>
+</body>
+</html>

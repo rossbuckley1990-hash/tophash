@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TopHash — GTM & Moat</title>
+<link rel="stylesheet" href="global.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .h1-gtm {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--primary);
+    max-width: 880px;
+  }
+  .col-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .col-title::before {
+    content: ''; display: inline-block; width: 22px; height: 1px; background: var(--accent);
+  }
+  .tier-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.005));
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    padding: 16px 18px;
+    position: relative;
+  }
+  .tier-card::before {
+    content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 2px;
+    background: linear-gradient(180deg, var(--accent), transparent);
+    border-radius: 2px;
+  }
+  .tier-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .tier-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-num);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 4px 9px;
+    border: 1px solid rgba(124,92,255,0.4);
+    border-radius: 999px;
+    color: var(--accent);
+    background: rgba(124,92,255,0.08);
+  }
+  .tier-price {
+    font-family: var(--font-num);
+    font-size: 11px;
+    color: var(--primary-dim);
+    letter-spacing: 0.04em;
+  }
+  .tier-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--primary);
+    line-height: 1.25;
+    margin-bottom: 6px;
+    letter-spacing: -0.005em;
+  }
+  .tier-body {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--primary-dim);
+  }
+  .moat-card {
+    background: linear-gradient(180deg, rgba(124,92,255,0.07), rgba(255,255,255,0.01));
+    border: 1px solid rgba(124,92,255,0.22);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .moat-num {
+    font-family: var(--font-num);
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--accent);
+    line-height: 1;
+    min-width: 26px;
+    padding-top: 2px;
+  }
+  .moat-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--primary);
+    line-height: 1.2;
+    margin-bottom: 4px;
+    letter-spacing: -0.005em;
+  }
+  .moat-body {
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: var(--primary-dim);
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- Page meta header -->
+  <div class="page-meta">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span>TOPHASH</span>
+    </div>
+    <div>04 / 04 — THE BUSINESS</div>
+  </div>
+
+  <!-- Header -->
+  <div style="margin-top: 22px;">
+    <div class="eyebrow" style="margin-bottom: 12px;">GO-TO-MARKET & MOAT</div>
+    <h1 class="h1-gtm">A three-tier motion that compounds into a defensible platform.</h1>
+    <hr class="accent-line" style="margin-top: 18px; margin-bottom: 0;">
+  </div>
+
+  <!-- Two-column layout -->
+  <div class="grid grid-cols-2 gap-8" style="margin-top: 24px;">
+
+    <!-- LEFT COLUMN — GTM -->
+    <div>
+      <div class="col-title">GO-TO-MARKET MOTION</div>
+
+      <div class="flex flex-col gap-3">
+
+        <!-- Tier 1 -->
+        <div class="tier-card">
+          <div class="tier-top">
+            <span class="tier-chip">TIER 01 · OSS</span>
+            <span class="tier-price">$0</span>
+          </div>
+          <div class="tier-title">TopHash v3 SDK — Developer Mindshare</div>
+          <div class="tier-body">Open-source Python/JS SDK. GitHub-native. Design-partner program with 8 launch partners. Free for evergreen approximate mode.</div>
+        </div>
+
+        <!-- Tier 2 -->
+        <div class="tier-card">
+          <div class="tier-top">
+            <span class="tier-chip">TIER 02 · CLOUD</span>
+            <span class="tier-price">$0.01 / 1K calls  ·  $0.10 / cert</span>
+          </div>
+          <div class="tier-title">TopHashX Cloud API — Usage-Based</div>
+          <div class="tier-body">Exact-mode certificates, proof objects, structural IDs via REST/gRPC. Designed for regulated industries — SOC 2, ISO 27001, FedRAMP-ready.</div>
+        </div>
+
+        <!-- Tier 3 -->
+        <div class="tier-card">
+          <div class="tier-top">
+            <span class="tier-chip">TIER 03 · ENTERPRISE</span>
+            <span class="tier-price">CUSTOM</span>
+          </div>
+          <div class="tier-title">TopHash Ω∞ Enterprise — Counterfactual Intelligence</div>
+          <div class="tier-body">On-prem/VPC deployment, Ω∞ counterfactual engine, dedicated research collaboration, custom theorem-stack integration. ACV $500K–$2M+.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN — Moat -->
+    <div>
+      <div class="col-title">WHY THIS COMPOUNDS INTO A MOAT</div>
+
+      <div class="flex flex-col gap-3">
+
+        <!-- Moat 1 -->
+        <div class="moat-card">
+          <div class="moat-num">01</div>
+          <div>
+            <div class="moat-title">Training-free + Deterministic</div>
+            <div class="moat-body">No model drift. No retraining cost. No GPU bill. Same input, same output, forever.</div>
+          </div>
+        </div>
+
+        <!-- Moat 2 -->
+        <div class="moat-card">
+          <div class="moat-num">02</div>
+          <div>
+            <div class="moat-title">Theorem-Stack Proof Objects</div>
+            <div class="moat-body">Auditable, certifiable, regulatory-grade. ML-based competitors cannot match this without re-deriving 11 theorems.</div>
+          </div>
+        </div>
+
+        <!-- Moat 3 -->
+        <div class="moat-card">
+          <div class="moat-num">03</div>
+          <div>
+            <div class="moat-title">Cross-Domain Primitive</div>
+            <div class="moat-body">Same engine serves 5 verticals. Every customer funds the same core. Data flywheel compounds across domains.</div>
+          </div>
+        </div>
+
+        <!-- Moat 4 -->
+        <div class="moat-card">
+          <div class="moat-num">04</div>
+          <div>
+            <div class="moat-title">Research-Grade IP</div>
+            <div class="moat-body">11 theorem families, whitepaper-ready, patent-defensible. Compounding publication + hiring moat.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Foot -->
+  <div class="foot">
+    <div>GTM & MOAT</div>
+    <div class="page-num">15 / 16</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    <ul>
+      <li>Open-source SDK funnels developers; cloud API lands teams; enterprise wins the $1M+ ACVs.</li>
+      <li>Three-tier ladder is also the adoption ladder — same primitive, deeper value at each tier.</li>
+      <li>The moat is structural, not promotional — competitors must re-derive 11 theorems to match.</li>
+      <li>Training-free + deterministic means no GPU bill, no drift, no retraining — favorable unit economics.</li>
+      <li>Cross-domain primitive turns every customer into R&D funding for the same core engine.</li>
+    </ul>
+  </aside>
+</div>
+</body>
+</html>
