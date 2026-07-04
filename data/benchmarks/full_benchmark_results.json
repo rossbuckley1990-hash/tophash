@@ -1,0 +1,846 @@
+{
+  "cybersecurity": {
+    "vertical": "cybersecurity",
+    "n_graphs": 26,
+    "graph_size_stats": {
+      "min_nodes": 2,
+      "max_nodes": 50,
+      "mean_nodes": 18.0,
+      "median_nodes": 13.5
+    },
+    "bench_canon_isomorphism": {
+      "n_graphs_tested": 26,
+      "permutation_invariance": {
+        "n_tested": 26,
+        "n_passed": 26,
+        "pass_rate": 1.0
+      },
+      "isomorphism_vs_nx": {
+        "n_pairs_tested": 2,
+        "n_agree": 2,
+        "agreement_rate": 1.0,
+        "n_both_iso": 2,
+        "n_both_noniso": 0,
+        "n_disagreements": 0
+      },
+      "uniqueness": {
+        "n_ids": 26,
+        "n_unique": 19,
+        "uniqueness_rate": 0.7307692307692307
+      },
+      "timing": {
+        "mean_id_time_ms": 3.4347848846454534,
+        "p95_id_time_ms": 22.460733249999976,
+        "max_id_time_ms": 24.234354999862262,
+        "total_id_time_s": 0.0893044070007818
+      }
+    },
+    "bench_omega_counterfactual": {
+      "n_graphs_tested": 10,
+      "total_perturbations_evaluated": 150,
+      "avg_invariant_channels": 10.2,
+      "avg_fragile_channels": 2.4,
+      "min_edit_certificates_found": 10,
+      "min_edit_rate": 1.0,
+      "timing": {
+        "mean_ms": 37.301331700109586,
+        "max_ms": 62.28220200046053,
+        "total_s": 0.37301331700109586
+      },
+      "response_stats": {
+        "mean_response": 0.17877212497334774,
+        "max_response": 1.0,
+        "std_response": 0.30213566715742807
+      },
+      "per_graph_details": [
+        {
+          "graph_idx": 0,
+          "n_nodes": 7,
+          "n_edges": 6,
+          "time_ms": 28.760510999745748,
+          "invariant_channels": 9,
+          "fragile_channels": 2,
+          "min_edit_found": true,
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.02
+        },
+        {
+          "graph_idx": 1,
+          "n_nodes": 10,
+          "n_edges": 9,
+          "time_ms": 23.867812999924354,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2
+        },
+        {
+          "graph_idx": 2,
+          "n_nodes": 6,
+          "n_edges": 5,
+          "time_ms": 21.17505599926517,
+          "invariant_channels": 9,
+          "fragile_channels": 2,
+          "min_edit_found": true,
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.02
+        },
+        {
+          "graph_idx": 3,
+          "n_nodes": 18,
+          "n_edges": 17,
+          "time_ms": 31.641995000427414,
+          "invariant_channels": 11,
+          "fragile_channels": 3,
+          "min_edit_found": true,
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.02
+        },
+        {
+          "graph_idx": 4,
+          "n_nodes": 7,
+          "n_edges": 6,
+          "time_ms": 22.61012800045137,
+          "invariant_channels": 9,
+          "fragile_channels": 2,
+          "min_edit_found": true,
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.02
+        },
+        {
+          "graph_idx": 5,
+          "n_nodes": 41,
+          "n_edges": 40,
+          "time_ms": 62.28220200046053,
+          "invariant_channels": 11,
+          "fragile_channels": 4,
+          "min_edit_found": true,
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.02
+        },
+        {
+          "graph_idx": 6,
+          "n_nodes": 40,
+          "n_edges": 39,
+          "time_ms": 58.00695200014161,
+          "invariant_channels": 11,
+          "fragile_channels": 4,
+          "min_edit_found": true,
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.02
+        },
+        {
+          "graph_idx": 7,
+          "n_nodes": 36,
+          "n_edges": 35,
+          "time_ms": 46.57233099987934,
+          "invariant_channels": 11,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.05
+        },
+        {
+          "graph_idx": 8,
+          "n_nodes": 10,
+          "n_edges": 9,
+          "time_ms": 24.766413000179455,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2
+        },
+        {
+          "graph_idx": 9,
+          "n_nodes": 38,
+          "n_edges": 37,
+          "time_ms": 53.32991600062087,
+          "invariant_channels": 11,
+          "fragile_channels": 4,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.3
+        }
+      ]
+    }
+  },
+  "drug_discovery": {
+    "vertical": "drug_discovery",
+    "n_graphs": 31,
+    "graph_size_stats": {
+      "min_nodes": 3,
+      "max_nodes": 16,
+      "mean_nodes": 10.580645161290322,
+      "median_nodes": 12.0
+    },
+    "bench_v3_classification": {
+      "WL_baseline": {
+        "accuracy_mean": 0.8083333333333332,
+        "accuracy_std": 0.15833333333333335,
+        "feature_dim": 4,
+        "feature_time_total_s": 0.003339118999974744,
+        "feature_time_per_graph_ms": 0.10771351612821754,
+        "n_samples": 31
+      },
+      "TopHash_v3_52D": {
+        "accuracy_mean": 0.8083333333333332,
+        "accuracy_std": 0.15833333333333335,
+        "feature_dim": 52,
+        "feature_time_total_s": 0.06414844900064054,
+        "feature_time_per_graph_ms": 2.0693048064722754,
+        "n_samples": 31
+      },
+      "TopHash_v3E_156D": {
+        "accuracy_mean": 0.8083333333333332,
+        "accuracy_std": 0.15833333333333335,
+        "feature_dim": 156,
+        "feature_time_total_s": 0.10168347599937988,
+        "feature_time_per_graph_ms": 3.2801121290122546,
+        "n_samples": 31
+      }
+    },
+    "bench_canon_isomorphism": {
+      "n_graphs_tested": 30,
+      "permutation_invariance": {
+        "n_tested": 30,
+        "n_passed": 30,
+        "pass_rate": 1.0
+      },
+      "isomorphism_vs_nx": {
+        "n_pairs_tested": 19,
+        "n_agree": 19,
+        "agreement_rate": 1.0,
+        "n_both_iso": 19,
+        "n_both_noniso": 0,
+        "n_disagreements": 0
+      },
+      "uniqueness": {
+        "n_ids": 30,
+        "n_unique": 11,
+        "uniqueness_rate": 0.36666666666666664
+      },
+      "timing": {
+        "mean_id_time_ms": 1.8980095333972713,
+        "p95_id_time_ms": 4.809828849829493,
+        "max_id_time_ms": 33.62392300005013,
+        "total_id_time_s": 0.05694028600191814
+      }
+    },
+    "bench_omega_counterfactual": {
+      "n_graphs_tested": 10,
+      "total_perturbations_evaluated": 150,
+      "avg_invariant_channels": 8.7,
+      "avg_fragile_channels": 1.0,
+      "min_edit_certificates_found": 10,
+      "min_edit_rate": 1.0,
+      "timing": {
+        "mean_ms": 34.293945399895165,
+        "max_ms": 41.02836499987461,
+        "total_s": 0.34293945399895165
+      },
+      "response_stats": {
+        "mean_response": 0.12549126387738394,
+        "max_response": 1.0,
+        "std_response": 0.2445028708689854
+      },
+      "per_graph_details": [
+        {
+          "graph_idx": 0,
+          "n_nodes": 10,
+          "n_edges": 10,
+          "time_ms": 31.197449999126547,
+          "invariant_channels": 8,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.3
+        },
+        {
+          "graph_idx": 1,
+          "n_nodes": 13,
+          "n_edges": 13,
+          "time_ms": 41.02836499987461,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15
+        },
+        {
+          "graph_idx": 2,
+          "n_nodes": 11,
+          "n_edges": 11,
+          "time_ms": 30.194848999599344,
+          "invariant_channels": 7,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2
+        },
+        {
+          "graph_idx": 3,
+          "n_nodes": 14,
+          "n_edges": 14,
+          "time_ms": 35.45672100062802,
+          "invariant_channels": 11,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2
+        },
+        {
+          "graph_idx": 4,
+          "n_nodes": 12,
+          "n_edges": 12,
+          "time_ms": 40.443922999656934,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15
+        },
+        {
+          "graph_idx": 5,
+          "n_nodes": 12,
+          "n_edges": 12,
+          "time_ms": 28.12402099971223,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15
+        },
+        {
+          "graph_idx": 6,
+          "n_nodes": 11,
+          "n_edges": 11,
+          "time_ms": 34.486273999391415,
+          "invariant_channels": 7,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2
+        },
+        {
+          "graph_idx": 7,
+          "n_nodes": 11,
+          "n_edges": 11,
+          "time_ms": 39.422702000592835,
+          "invariant_channels": 7,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2
+        },
+        {
+          "graph_idx": 8,
+          "n_nodes": 11,
+          "n_edges": 11,
+          "time_ms": 26.510390999646916,
+          "invariant_channels": 7,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2
+        },
+        {
+          "graph_idx": 9,
+          "n_nodes": 12,
+          "n_edges": 12,
+          "time_ms": 36.074758000722795,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15
+        }
+      ]
+    }
+  },
+  "ai_supply_chain": {
+    "vertical": "ai_supply_chain",
+    "n_graphs": 13,
+    "graph_size_stats": {
+      "min_nodes": 6,
+      "max_nodes": 102,
+      "mean_nodes": 24.384615384615383,
+      "median_nodes": 14.0
+    },
+    "bench_v3_classification": null,
+    "bench_canon_isomorphism": {
+      "n_graphs_tested": 11,
+      "permutation_invariance": {
+        "n_tested": 11,
+        "n_passed": 11,
+        "pass_rate": 1.0
+      },
+      "isomorphism_vs_nx": {
+        "n_pairs_tested": 0,
+        "n_agree": 0,
+        "agreement_rate": 0.0,
+        "n_both_iso": 0,
+        "n_both_noniso": 0,
+        "n_disagreements": 0
+      },
+      "uniqueness": {
+        "n_ids": 11,
+        "n_unique": 11,
+        "uniqueness_rate": 1.0
+      },
+      "timing": {
+        "mean_id_time_ms": 6.157597727410161,
+        "p95_id_time_ms": 22.499722000247857,
+        "max_id_time_ms": 32.53127300013148,
+        "total_id_time_s": 0.06773357500151178
+      }
+    },
+    "bench_omega_counterfactual": {
+      "n_graphs_tested": 10,
+      "total_perturbations_evaluated": 150,
+      "avg_invariant_channels": 11.1,
+      "avg_fragile_channels": 1.1,
+      "min_edit_certificates_found": 10,
+      "min_edit_rate": 1.0,
+      "timing": {
+        "mean_ms": 149.21247149986812,
+        "max_ms": 1004.1339559993503,
+        "total_s": 1.4921247149986812
+      },
+      "response_stats": {
+        "mean_response": 0.12105829825052349,
+        "max_response": 1.0,
+        "std_response": 0.2554476073038766
+      },
+      "per_graph_details": [
+        {
+          "graph_idx": 0,
+          "n_nodes": 11,
+          "n_edges": 13,
+          "time_ms": 41.46292800032825,
+          "invariant_channels": 9,
+          "fragile_channels": 2,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.3
+        },
+        {
+          "graph_idx": 1,
+          "n_nodes": 19,
+          "n_edges": 23,
+          "time_ms": 40.54682799960574,
+          "invariant_channels": 12,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.1
+        },
+        {
+          "graph_idx": 2,
+          "n_nodes": 35,
+          "n_edges": 45,
+          "time_ms": 78.21615299963014,
+          "invariant_channels": 14,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02
+        },
+        {
+          "graph_idx": 3,
+          "n_nodes": 51,
+          "n_edges": 66,
+          "time_ms": 154.8968329998388,
+          "invariant_channels": 14,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.05
+        },
+        {
+          "graph_idx": 4,
+          "n_nodes": 102,
+          "n_edges": 134,
+          "time_ms": 1004.1339559993503,
+          "invariant_channels": 14,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02
+        },
+        {
+          "graph_idx": 5,
+          "n_nodes": 12,
+          "n_edges": 11,
+          "time_ms": 55.807780999202805,
+          "invariant_channels": 8,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02
+        },
+        {
+          "graph_idx": 6,
+          "n_nodes": 14,
+          "n_edges": 13,
+          "time_ms": 29.438077000122576,
+          "invariant_channels": 9,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02
+        },
+        {
+          "graph_idx": 7,
+          "n_nodes": 17,
+          "n_edges": 16,
+          "time_ms": 32.26756100048078,
+          "invariant_channels": 11,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02
+        },
+        {
+          "graph_idx": 8,
+          "n_nodes": 20,
+          "n_edges": 19,
+          "time_ms": 34.492701000090165,
+          "invariant_channels": 13,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02
+        },
+        {
+          "graph_idx": 9,
+          "n_nodes": 6,
+          "n_edges": 6,
+          "time_ms": 20.861897000031604,
+          "invariant_channels": 7,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.3
+        }
+      ]
+    }
+  },
+  "financial_fraud": {
+    "vertical": "financial_fraud",
+    "n_graphs": 8,
+    "graph_size_stats": {
+      "min_nodes": 20,
+      "max_nodes": 500,
+      "mean_nodes": 162.5,
+      "median_nodes": 100.0
+    },
+    "bench_v3_classification": null,
+    "bench_canon_isomorphism": {
+      "n_graphs_tested": 3,
+      "permutation_invariance": {
+        "n_tested": 3,
+        "n_passed": 3,
+        "pass_rate": 1.0
+      },
+      "isomorphism_vs_nx": {
+        "n_pairs_tested": 0,
+        "n_agree": 0,
+        "agreement_rate": 0.0,
+        "n_both_iso": 0,
+        "n_both_noniso": 0,
+        "n_disagreements": 0
+      },
+      "uniqueness": {
+        "n_ids": 3,
+        "n_unique": 3,
+        "uniqueness_rate": 1.0
+      },
+      "timing": {
+        "mean_id_time_ms": 3.7619583332949937,
+        "p95_id_time_ms": 4.88767810020363,
+        "max_id_time_ms": 4.994482000256539,
+        "total_id_time_s": 0.011285874999884982
+      }
+    },
+    "bench_omega_counterfactual": {
+      "n_graphs_tested": 8,
+      "total_perturbations_evaluated": 120,
+      "avg_invariant_channels": 10.0,
+      "avg_fragile_channels": 1.875,
+      "min_edit_certificates_found": 8,
+      "min_edit_rate": 1.0,
+      "timing": {
+        "mean_ms": 8207.316960125012,
+        "max_ms": 40793.228653999904,
+        "total_s": 65.65853568100009
+      },
+      "response_stats": {
+        "mean_response": 0.16461733520108549,
+        "max_response": 1.0,
+        "std_response": 0.2888778119668327
+      },
+      "per_graph_details": [
+        {
+          "graph_idx": 0,
+          "n_nodes": 20,
+          "n_edges": 108,
+          "time_ms": 52.16850700071518,
+          "invariant_channels": 10,
+          "fragile_channels": 5,
+          "min_edit_found": true,
+          "min_edit_perturbation": "motif_mask",
+          "min_edit_scale": 0.3
+        },
+        {
+          "graph_idx": 1,
+          "n_nodes": 30,
+          "n_edges": 171,
+          "time_ms": 65.27533799999219,
+          "invariant_channels": 10,
+          "fragile_channels": 3,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.3
+        },
+        {
+          "graph_idx": 2,
+          "n_nodes": 50,
+          "n_edges": 495,
+          "time_ms": 380.58413099952304,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.15
+        },
+        {
+          "graph_idx": 3,
+          "n_nodes": 80,
+          "n_edges": 1166,
+          "time_ms": 3041.681416000756,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "motif_mask",
+          "min_edit_scale": 0.2
+        },
+        {
+          "graph_idx": 4,
+          "n_nodes": 120,
+          "n_edges": 2070,
+          "time_ms": 7713.866609999968,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "motif_mask",
+          "min_edit_scale": 0.15
+        },
+        {
+          "graph_idx": 5,
+          "n_nodes": 200,
+          "n_edges": 3005,
+          "time_ms": 6102.271209999344,
+          "invariant_channels": 10,
+          "fragile_channels": 2,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.3
+        },
+        {
+          "graph_idx": 6,
+          "n_nodes": 300,
+          "n_edges": 4596,
+          "time_ms": 7509.4598149999,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2
+        },
+        {
+          "graph_idx": 7,
+          "n_nodes": 500,
+          "n_edges": 10655,
+          "time_ms": 40793.228653999904,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.1
+        }
+      ]
+    }
+  },
+  "data_infrastructure": {
+    "vertical": "data_infrastructure",
+    "n_graphs": 25,
+    "graph_size_stats": {
+      "min_nodes": 30,
+      "max_nodes": 200,
+      "mean_nodes": 96.0,
+      "median_nodes": 80.0
+    },
+    "bench_v3_classification": {
+      "error": "setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (25,) + inhomogeneous part."
+    },
+    "bench_canon_isomorphism": {
+      "n_graphs_tested": 10,
+      "permutation_invariance": {
+        "n_tested": 10,
+        "n_passed": 10,
+        "pass_rate": 1.0
+      },
+      "isomorphism_vs_nx": {
+        "n_pairs_tested": 0,
+        "n_agree": 0,
+        "agreement_rate": 0.0,
+        "n_both_iso": 0,
+        "n_both_noniso": 0,
+        "n_disagreements": 0
+      },
+      "uniqueness": {
+        "n_ids": 10,
+        "n_unique": 10,
+        "uniqueness_rate": 1.0
+      },
+      "timing": {
+        "mean_id_time_ms": 1.8739093997282907,
+        "p95_id_time_ms": 3.6806511499889876,
+        "max_id_time_ms": 4.563430999951379,
+        "total_id_time_s": 0.018739093997282907
+      }
+    },
+    "bench_omega_counterfactual": {
+      "n_graphs_tested": 10,
+      "total_perturbations_evaluated": 150,
+      "avg_invariant_channels": 10.1,
+      "avg_fragile_channels": 2.4,
+      "min_edit_certificates_found": 9,
+      "min_edit_rate": 0.9,
+      "timing": {
+        "mean_ms": 1754.3367783000576,
+        "max_ms": 7016.08732800014,
+        "total_s": 17.543367783000576
+      },
+      "response_stats": {
+        "mean_response": 0.18661476566324328,
+        "max_response": 1.0,
+        "std_response": 0.30523976593671004
+      },
+      "per_graph_details": [
+        {
+          "graph_idx": 0,
+          "n_nodes": 30,
+          "n_edges": 186,
+          "time_ms": 84.96511700013798,
+          "invariant_channels": 10,
+          "fragile_channels": 3,
+          "min_edit_found": false,
+          "min_edit_perturbation": null,
+          "min_edit_scale": null
+        },
+        {
+          "graph_idx": 1,
+          "n_nodes": 50,
+          "n_edges": 480,
+          "time_ms": 492.88034599976527,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "motif_mask",
+          "min_edit_scale": 0.3
+        },
+        {
+          "graph_idx": 2,
+          "n_nodes": 80,
+          "n_edges": 861,
+          "time_ms": 941.9802820002587,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.3
+        },
+        {
+          "graph_idx": 3,
+          "n_nodes": 120,
+          "n_edges": 1797,
+          "time_ms": 3750.2207750003436,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.3
+        },
+        {
+          "graph_idx": 4,
+          "n_nodes": 200,
+          "n_edges": 3622,
+          "time_ms": 7016.08732800014,
+          "invariant_channels": 10,
+          "fragile_channels": 2,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.1
+        },
+        {
+          "graph_idx": 5,
+          "n_nodes": 30,
+          "n_edges": 44,
+          "time_ms": 50.62672799977008,
+          "invariant_channels": 11,
+          "fragile_channels": 2,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15
+        },
+        {
+          "graph_idx": 6,
+          "n_nodes": 50,
+          "n_edges": 199,
+          "time_ms": 138.2947479996801,
+          "invariant_channels": 10,
+          "fragile_channels": 4,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2
+        },
+        {
+          "graph_idx": 7,
+          "n_nodes": 80,
+          "n_edges": 525,
+          "time_ms": 518.7181960000089,
+          "invariant_channels": 10,
+          "fragile_channels": 2,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15
+        },
+        {
+          "graph_idx": 8,
+          "n_nodes": 120,
+          "n_edges": 504,
+          "time_ms": 1129.4694040007016,
+          "invariant_channels": 10,
+          "fragile_channels": 4,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.05
+        },
+        {
+          "graph_idx": 9,
+          "n_nodes": 200,
+          "n_edges": 1629,
+          "time_ms": 3420.1248589997704,
+          "invariant_channels": 10,
+          "fragile_channels": 4,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02
+        }
+      ]
+    }
+  }
+}
