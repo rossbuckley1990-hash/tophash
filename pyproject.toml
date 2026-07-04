@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tophash"
+version = "0.1.0"
+description = "TopHash — The Structural Identity Layer for the AI Era. A training-free, theorem-backed structural fingerprint for any graph, with exact canonization and counterfactual engine."
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Crucible Governance Ltd", email = "founders@tophash.io"},
+]
+keywords = [
+    "graph",
+    "structural-identity",
+    "canonical-labeling",
+    "persistent-homology",
+    "graph-kernel",
+    "supply-chain",
+    "sbom",
+    "topological-data-analysis",
+    "fingerprint",
+    "isomorphism",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Security :: Cryptography",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Database :: Database Engines/Servers",
+]
+dependencies = [
+    "networkx>=3.0",
+    "numpy>=1.21",
+    "scipy>=1.7",
+    "scikit-learn>=1.0",
+    "matplotlib>=3.5",
+    "ripser>=0.6",
+    "pynauty>=2.8",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "build>=1.0",
+    "twine>=4.0",
+]
+bench = [
+    "torch>=2.0",
+    "torch-geometric>=2.4",
+]
+
+[project.urls]
+Homepage = "https://tophash.io"
+Repository = "https://github.com/rossbuckley1990-hash/tophash"
+Documentation = "https://github.com/rossbuckley1990-hash/tophash#readme"
+"Bug Tracker" = "https://github.com/rossbuckley1990-hash/tophash/issues"
+"TopHash Cloud" = "https://tophash.io/cloud"
+
+[tool.setuptools]
+packages = ["tophash"]
+
+[tool.setuptools.package-data]
+tophash = ["py.typed"]

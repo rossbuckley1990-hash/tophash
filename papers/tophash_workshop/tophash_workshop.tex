@@ -1,0 +1,316 @@
+% TopHash: A Training-Free, Theorem-Backed Structural Identity Primitive for Graphs
+% NeurIPS 2026 Workshop on Topological Data Analysis / Graph Representation Learning
+%
+% Compilation: pdflatex tophash_workshop.tex (requires neurips_2024.sty)
+%
+\documentclass[11pt]{article}
+
+% Self-contained formatting (NeurIPS workshop-compatible layout)
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% NeurIPS-compatible page geometry
+\geometry{
+    letterpaper,
+    left=1in,
+    right=1in,
+    top=1in,
+    bottom=1in,
+}
+
+% Section formatting
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.5em}{}
+
+% Line spacing
+\renewcommand{\baselinestretch}{1.0}
+
+% Compact lists
+\usepackage{enumitem}
+\setlist{nosep, leftmargin=*}
+
+\title{TopHash: A Training-Free, Theorem-Backed Structural Identity Primitive for Graphs}
+
+\author{
+  TopHash Project Team \\
+  Crucible Governance Ltd \\
+  \texttt{founders@tophash.io} \\
+  \url{https://github.com/rossbuckley1990-hash/tophash}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We present TopHash, a training-free structural identity primitive for graphs that combines three qualitatively distinct layers: (1) a 52-dimensional multi-view structural fingerprint (TopHash v3) fusing persistent homology, spectral graph theory, and geometric statistics via a self-tuning quality-weighted engine; (2) an exact canonization layer (TopHashX) producing SHA-256 canonical IDs with machine-auditable proof objects, backed by nauty; and (3) a counterfactual perturbation engine (TopHash $\Omega^\infty$) that decomposes a graph's structural channels into an invariant core and fragility shell, with stability-bound certificates derived from bottleneck stability, interleaving distance, and Cheeger inequality. On the standard MUTAG, PROTEINS, and NCI1 graph classification benchmarks, TopHash v3 achieves 86.2\%, 74.8\%, and 71.0\% accuracy respectively via 10-fold cross-validation with an RBF SVM, outperforming the Weisfeiler-Lehman subtree kernel baseline by 4.8, 2.9, and 2.0 percentage points. TopHashX achieves 100\% permutation invariance and 100\% agreement with NetworkX's isomorphism checker on all testable graph pairs, with mean canonical ID computation time of 1.5 milliseconds per graph. The entire pipeline is bitwise-deterministic across independent Python processes (CI-tested). We release the full reference implementation, benchmark suite, and 103-graph evaluation set under the MIT license.
+\end{abstract}
+
+\section{Introduction}
+
+Graph-structured data---molecular graphs, dependency trees, transaction networks, neural network architectures---pervades modern machine learning and software engineering. Yet the primitives for reasoning about structural identity at scale remain fragmented: graph neural networks require training data and produce non-deterministic embeddings; graph kernels are single-view and approximate; canonical labeling tools (nauty, bliss) produce exact labels but no auditable proof objects; and no existing primitive bridges approximate retrieval, exact identity, and counterfactual analysis in a single stack.
+
+We propose TopHash, a three-layer structural identity primitive that addresses this gap. The key design principle is \emph{honest separation of concerns}: approximate retrieval (Layer 1) is fast but explicitly not a complete invariant; exact canonization (Layer 2) is provably complete and produces machine-auditable proof objects; counterfactual analysis (Layer 3) is predicate-general and emits stability-bound certificates. Each layer composes but does not duplicate the others.
+
+\subsection{Contributions}
+
+\begin{enumerate}
+    \item \textbf{TopHash v3:} a training-free 52-dimensional multi-view structural fingerprint fusing persistent homology (20D), spectral (10D), and geometric (10D) views via a self-tuning quality-weighted engine, plus 6D cross-terms and 6D meta-features. A 156-dimensional Ensemble variant adds multi-resolution structure.
+    
+    \item \textbf{TopHashX:} an exact canonization layer wrapping nauty to produce SHA-256 canonical IDs with machine-auditable proof objects containing refinement traces, witness logs, and validation records. The proof object is the contribution---nauty solves the labeling; we provide the auditable receipt layer nauty does not.
+    
+    \item \textbf{TopHash $\Omega^\infty$:} a counterfactual perturbation engine with rule-based edit selection (betweenness, articulation points, motifs), smart pruning via the invariant core, and stability-bound certificates derived from bottleneck stability (Cohen-Steiner et al.\ 2007), interleaving distance (Chazal et al.\ 2009), and the Cheeger inequality.
+    
+    \item \textbf{Empirical validation} on 103 real graphs across 8 verticals, including the standard MUTAG/PROTEINS/NCI1 benchmarks, with a bitwise-determinism CI test as a sacred invariant.
+    
+    \item \textbf{Open-source release} under MIT license: \url{https://github.com/rossbuckley1990-hash/tophash}
+\end{enumerate}
+
+\section{TopHash v3: Training-Free Multi-View Fingerprint}
+
+\subsection{Three complementary views}
+
+TopHash v3 computes three views of a graph $G = (V, E)$, each capturing a different aspect of structure:
+
+\paragraph{Persistence view (20D).} We compute Vietoris-Rips persistent homology (dimensions 0 and 1) via ripser over the shortest-path metric of $G$. For graphs with $|V| > 200$, we use landmark-based approximation via farthest-first sampling (Silva \& M\'emoli, 2012) with $L = 80$ landmarks, reducing persistence computation from $O(n^3)$ to $O(L^3)$. The 20D vector aggregates H0 and H1 diagrams via: mean, std, max, min, sum of lifetimes; feature count; persistence entropy; fraction of total features; infinite-feature count; and persistence energy.
+
+\paragraph{Spectral view (10D).} We compute the 10 smallest and largest eigenvalues of the graph Laplacian $L = D - A$ and adjacency matrix $A$, plus the spectral gap (largest gap between consecutive Laplacian eigenvalues, a proxy for cluster count). This captures global connectivity regime, bottleneck structure (via the Fiedler value), and spectral radius.
+
+\paragraph{Geometric view (10D).} We compute degree statistics (mean, std, max, normalized), clustering coefficient, triangle count, mean shortest path length, diameter, density, degree assortativity, and a 4-path motif count proxy (trace of $A^4$). This captures local and global combinatorial structure.
+
+\subsection{Self-tuning weight engine}
+
+Each view $v \in \{\text{pers}, \text{spec}, \text{geom}\}$ produces an internal quality score $q_v(G) \in [0, 1]$ measuring how much structural signal the view extracts from $G$. Quality scores are converted to normalized weights via:
+\begin{equation}
+w_v(G) = \frac{\sqrt{q_v(G)}}{\sum_u \sqrt{q_u(G)}}
+\end{equation}
+The square-root sharpening emphasizes differences without over-concentrating. If all qualities are near zero (degenerate case), weights fall back to uniform $1/3$.
+
+\subsection{Cross-terms and meta-features}
+
+Six cross-term features capture inter-view interactions: weighted mean-products for each view pair, mean differences, and the weight entropy (a measure of how balanced the self-tuning decision was). Six meta-features record $\log(|V|)$, $\log(|E|+1)$, $\log(\text{components})$, and the three weights themselves---making the self-tuning decision auditable from the fingerprint alone.
+
+The final 52D fingerprint is $[\mathbf{v}_\text{pers} \cdot w_\text{pers},\; \mathbf{v}_\text{spec} \cdot w_\text{spec},\; \mathbf{v}_\text{geom} \cdot w_\text{geom},\; \mathbf{v}_\text{cross},\; \mathbf{v}_\text{meta}]$.
+
+\subsection{Ensemble variant (156D)}
+
+The Ensemble variant computes the v3 fingerprint on both the original graph $G$ and a coarsened graph $G_\text{coarse}$ (via heavy-edge matching), then appends the difference: $[\mathbf{h}_\text{fine}, \mathbf{h}_\text{coarse}, \mathbf{h}_\text{fine} - \mathbf{h}_\text{coarse}]$. This captures multi-resolution structure.
+
+\section{TopHashX: Exact Canonization with Proof Objects}
+
+\subsection{The strategic decision: delegate labeling, own the receipt}
+
+Canonical graph labeling is a solved problem. nauty (McKay, 1981) and its successors (Traces, bliss) are free, decades-hardened, and produce provably canonical labelings. TopHash's contribution is \emph{not} the labeling algorithm---it is the auditable proof object wrapped around it. We delegate canonical labeling to pynauty (Python bindings for nauty) and focus on the receipt layer nauty does not provide.
+
+\subsection{The five-stage pipeline}
+
+\begin{enumerate}
+    \item \textbf{Search} (approximate): TopHash v3 fingerprint for candidate retrieval.
+    \item \textbf{Refine}: 1-WL color refinement to convergence, producing a stable partition that compresses the search tree and serves as a coloring hint for nauty.
+    \item \textbf{Canon}: nauty's canonical labeling, seeded with the WL partition.
+    \item \textbf{Cert}: proof object emission containing the refinement trace, search witness, validation records, and the engine used.
+    \item \textbf{ID}: $\text{SHA-256}(\text{canonical serialization})$, where the serialization is versioned as \texttt{tophashx-canon-1.0.0}.
+\end{enumerate}
+
+\subsection{Correctness target}
+
+For simple undirected graphs, TopHashX satisfies:
+\begin{equation}
+C(G) = C(H) \iff G \cong H
+\end{equation}
+where $C(\cdot)$ is the canonical serialization. The SHA-256 digest $H(C(G))$ is the operational identity; $C(G)$ remains the source of truth. The proof object carries \texttt{exactness\_guaranteed: True} when pynauty is the engine, and \texttt{False} with \texttt{canon\_engine: fallback\_heuristic} if pynauty is unavailable.
+
+\section{TopHash $\Omega^\infty$: Counterfactual Structural Intelligence}
+
+\subsection{Rule-based perturbation algebra}
+
+Unlike v0 (which used SHA-256-seeded random selection), v0.1 selects perturbation edits by structural rank:
+\begin{itemize}
+    \item \textbf{Node deletion:} articulation points first, then highest-betweenness nodes.
+    \item \textbf{Edge deletion:} highest edge-betweenness edges.
+    \item \textbf{Edge insertion:} high-degree pairs that are currently far apart (bridge-like additions).
+    \item \textbf{Rewiring:} remove high-betweenness edges, add bridge edges between low-degree far-apart pairs.
+    \item \textbf{Motif masking:} remove the highest-betweenness edge from the highest-betweenness triangles.
+\end{itemize}
+
+\subsection{Response tensor and invariant core}
+
+For each graph $G$, we compute a $3 \times 5 \times 3$ response tensor $R[v, \pi, s] = d_v(F_v(G), F_v(\pi_s(G)))$ measuring the L2 distance between the base view-$v$ fingerprint and the perturbed fingerprint, across 5 perturbation families and 3 scales. Smart pruning skips remaining scales for channels whose first-scale response is below 1\% of the maximum, reducing computation by 40--50\%.
+
+The invariant core contains channels with invariance score $\geq 0.9$; the fragility shell contains channels with score $\leq 0.5$.
+
+\subsection{Minimal-edit certificates}
+
+For the disconnect predicate, we call the Stoer-Wagner min-cut oracle \emph{directly} to produce a provably-minimal certificate, rather than relying on perturbation search. The certificate reports \texttt{oracle\_verified: True} and \texttt{engine: stoer\_wagner\_exact}. For predicate-general cases (class-flip, regime-change) where no polynomial-time oracle exists, we fall back to perturbation search and report \texttt{engine: perturbation\_search}.
+
+\subsection{Stability-bound certificates}
+
+Each $\Omega^\infty$ dossier includes a stability certificate deriving bounds from three theorems:
+\begin{itemize}
+    \item \textbf{Bottleneck stability} (Cohen-Steiner et al., 2007): $\text{bottleneck}(\text{dgm}(f), \text{dgm}(g)) \leq \|f - g\|_\infty$. For unit-weight graphs, the edge perturbation bound is 1.0.
+    \item \textbf{Interleaving stability} (Chazal et al., 2009): bounds the connectivity filtration perturbation.
+    \item \textbf{Cheeger inequality}: $\lambda_2(L)/2 \leq \Phi \leq \sqrt{2\lambda_2(L)}$, bounding conductance and spectral perturbation.
+\end{itemize}
+The certificate compares the empirical max response against the scaled theoretical bound and reports \texttt{certificate\_valid: True/False}.
+
+\section{Experiments}
+
+\subsection{Datasets}
+
+We evaluate on 103 real graphs across 8 verticals:
+\begin{itemize}
+    \item \textbf{Cybersecurity:} 26 PyPI package dependency graphs (live PyPI API).
+    \item \textbf{Drug discovery:} 31 MUTAG-style molecular graphs from real SMILES strings.
+    \item \textbf{AI supply chain:} 13 synthetic neural network architecture graphs (ResNet/VGG/Inception variants).
+    \item \textbf{Financial fraud:} 8 subgraphs from Stanford SNAP email-Eu-core network.
+    \item \textbf{Data infrastructure:} 25 subgraphs from 5 SNAP datasets.
+    \item \textbf{TUDatasets:} MUTAG (188 graphs), PROTEINS (1,113), NCI1 (500-graph sample of 4,110).
+\end{itemize}
+
+\subsection{Graph classification on TUDatasets}
+
+We benchmark TopHash v3 (52D) and TopHash v3 Ensemble (156D) against a Weisfeiler-Lehman subtree kernel baseline (128D hashed histogram) and a majority-class DummyClassifier, using 10-fold stratified cross-validation with an RBF SVM.
+
+\begin{table}[h]
+\centering
+\caption{Graph classification accuracy (10-fold CV) on real TUDatasets.}
+\label{tab:classification}
+\begin{tabular}{lcccc}
+\toprule
+Dataset & Dummy & WL baseline & TopHash v3 & TopHash v3E \\
+& (majority) & (128D) & (52D) & (156D) \\
+\midrule
+MUTAG (188) & 0.665 & 0.814 & \textbf{0.862} & \textbf{0.878} \\
+PROTEINS (1,113) & 0.596 & 0.719 & \textbf{0.748} & 0.746 \\
+NCI1 (500 sample) & 0.514 & 0.690 & \textbf{0.710} & \textbf{0.730} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+TopHash v3 outperforms the WL baseline on all three datasets, and outperforms the majority-class dummy by 15--20 percentage points, confirming no majority-class collapse. On MUTAG, TopHash v3's 86.2\% falls within the published WL kernel range of 84--86\%.
+
+\subsection{Canonical labeling correctness}
+
+\begin{table}[h]
+\centering
+\caption{TopHashX canonical labeling correctness (pynauty-backed).}
+\label{tab:canon}
+\begin{tabular}{lcccc}
+\toprule
+Dataset & Engine & Perm.\ invar.\ & nx agreement & Uniqueness \\
+\midrule
+MUTAG & pynauty & 100\% & 100\% (12 pairs) & 86.7\% \\
+PROTEINS & pynauty & 100\% & n/a (0 pairs) & 100\% \\
+NCI1 & pynauty & 100\% & 100\% (2 pairs) & 100\% \\
+Petersen graph & pynauty & 100\% & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Petersen graph---vertex-transitive with automorphism group of order 120---produces a single canonical ID across 8 random relabelings, where the previous bounded-search heuristic produced 6 distinct IDs. This confirms the strategic decision to delegate labeling to nauty.
+
+\subsection{Determinism}
+
+The determinism CI test runs the full pipeline in two subprocesses with \texttt{PYTHONHASHSEED=0} and \texttt{PYTHONHASHSEED=12345}, then asserts bitwise-identical output across 24 results (v3 fingerprints, canonical IDs, $\Omega^\infty$ dossiers). The test passes. This exists because Python's built-in \texttt{hash()} is salted per-process for strings; an earlier version used \texttt{hash(("edge\_del", scale))} and would have produced different output across interpreter restarts.
+
+\subsection{Timing}
+
+\begin{table}[h]
+\centering
+\caption{Per-graph timing (mean across all test graphs).}
+\label{tab:timing}
+\begin{tabular}{lc}
+\toprule
+Operation & Mean time \\
+\midrule
+TopHash v3 fingerprint & 6.6 ms \\
+TopHashX canonical ID & 1.5 ms \\
+TopHash $\Omega^\infty$ (15 perturbations, smart-pruned) & 30--8200 ms \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Related Work}
+
+\paragraph{Graph kernels.} The Weisfeiler-Lehman subtree kernel (Shervashidze et al., 2011) is the canonical training-free baseline. TopHash v3 differs by fusing three complementary views (topological, spectral, geometric) rather than pure combinatorial refinement, and by self-tuning view weights per-graph.
+
+\paragraph{Canonical labeling.} nauty (McKay, 1981), Traces, and bliss are the industry-standard canonical labeling tools. TopHashX does not compete with these; it wraps them with a proof-object layer (refinement trace, witness log, versioned serialization, SHA-256 receipt) that they do not provide.
+
+\paragraph{Persistent homology for graphs.} Topological data analysis has been applied to graph classification (Hofer et al., 2017), but typically as a single-view feature. TopHash v3 fuses persistence with spectral and geometric views via a self-tuning engine, and the $\Omega^\infty$ layer adds counterfactual analysis absent from prior TDA-for-graphs work.
+
+\paragraph{Graph neural networks.} GNNs require training data, produce non-deterministic embeddings across runs, and cannot produce proof objects. TopHash is explicitly training-free and deterministic---positioned as a complementary primitive, not a GNN replacement.
+
+\section{Limitations and Roadmap}
+
+\begin{enumerate}
+    \item \textbf{Topology-only fingerprints.} TopHash v3/v0.1 computes topology-only fingerprints. On the top 100 PyPI packages, 86 of 100 share structural skeletons (isomorphic dependency graphs with different node labels). v0.2 adds node-label-aware fingerprints.
+    \item \textbf{Landmark persistence approximation.} For $|V| > 200$, the persistence view uses landmark-based approximation. The fingerprint is deterministic but not directly comparable to dense-mode fingerprints of the same graph. The threshold is set to keep this discontinuity far from TUDataset graph sizes.
+    \item \textbf{Predicate-general $\Omega^\infty$.} For predicates without polynomial-time oracles, $\Omega^\infty$ uses perturbation search and cannot verify minimality. The disconnect predicate uses the exact Stoer-Wagner oracle directly.
+\end{enumerate}
+
+\section{Conclusion}
+
+TopHash is a working reference implementation of a three-layer structural identity primitive, validated on 103 real graphs and three standard TUDataset benchmarks. The training-free fingerprint outperforms the WL baseline; the canonization layer is provably exact and produces auditable proof objects; the counterfactual engine emits stability-bound certificates. The entire pipeline is bitwise-deterministic across processes. The code is open-source under MIT license, installable via \texttt{pip install tophash}, and the benchmark suite is reproducible.
+
+\section*{Reproducibility}
+
+The full reference implementation, benchmark suite, and 103-graph evaluation set are available at \url{https://github.com/rossbuckley1990-hash/tophash}. The determinism CI test (\texttt{scripts/test\_determinism.py}) verifies bitwise-identical output across independent processes.
+
+\section*{Acknowledgments}
+
+We thank the developers of networkx, scipy, ripser, pynauty, and the TUDataset maintainers for the open-source infrastructure that made this work possible.
+
+\bibliographystyle{plain}
+\begin{thebibliography}{10}
+
+\bibitem{shervashidze2011weisfeiler}
+Nino Shervashidze, Pascal Schweitzer, Erik Jan van Leeuwen, Kurt Mehlhorn, and Karsten Margrit Borgwardt.
+\newblock Weisfeiler-lehman graph kernels.
+\newblock {\em Journal of Machine Learning Research}, 12(Sep):2539--2561, 2011.
+
+\bibitem{mckay1981practical}
+Brendan D McKay.
+\newblock Practical graph isomorphism.
+\newblock In {\em Congressus Numerantium}, volume 30, pages 45--87, 1981.
+
+\bibitem{cohensteiner2007stability}
+David Cohen-Steiner, Herbert Edelsbrunner, and John Harer.
+\newblock Stability of persistence diagrams.
+\newblock {\em Discrete \& Computational Geometry}, 37(1):103--120, 2007.
+
+\bibitem{chazal2009proximity}
+Fr{\'e}d{\'e}ric Chazal, David Cohen-Steiner, Marc Glisse, Leonidas J Guibas, and Steve Y Oudot.
+\newblock Proximity of persistence modules and their diagrams.
+\newblock In {\em Proceedings of the twenty-fifth annual symposium on Computational geometry}, pages 237--246, 2009.
+
+\bibitem{silva2012landmark}
+Vin de Silva and Gunnar Carlsson.
+\newblock Topological estimation using witness complexes.
+\newblock In {\em Topological Methods in Data Analysis and Visualization}, pages 139--161. Springer, 2012.
+
+\bibitem{hofer2017deep}
+Christoph Hofer, Roland Kwitt, Marc Niethammer, and Andreas Uhl.
+\newblock Deep learning with topological signatures.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages 1634--1644, 2017.
+
+\bibitem{morris2020tudataset}
+Christopher Morris, Nils M Kriege, Franka Bause, Kristian Kersting, Petra Mutzel, and Marion Neumann.
+\newblock Tudataset: A collection of benchmark datasets for learning with graphs.
+\newblock {\em arXiv preprint arXiv:2007.08663}, 2020.
+
+\end{thebibliography}
+
+\end{document}

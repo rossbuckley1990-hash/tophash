@@ -54,3 +54,7 @@ data/tudataset/raw/
 # Logs
 *.log
 nohup.out
+dist/
+papers/tophash_workshop/*.aux
+papers/tophash_workshop/*.log
+papers/tophash_workshop/*.out

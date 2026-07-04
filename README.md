@@ -29,6 +29,41 @@ This test exists because Python's built-in `hash()` is salted per-process for st
 
 ---
 
+## Install
+
+```bash
+pip install tophash
+```
+
+That's it. The package includes pynauty (exact canonical labeling), ripser (persistent homology), and all dependencies. Python 3.9+.
+
+```python
+from tophash import v3, canon
+import networkx as nx
+
+G = nx.karate_club_graph()
+fp = v3.compute(G)                    # 52D training-free fingerprint
+result = canon.tophashx(G)            # SHA-256 canonical ID + proof object
+print(result['canonical_id'])         # the structural identity receipt
+print(result['exactness_guaranteed']) # True (pynauty-backed)
+```
+
+---
+
+## TopHash Cloud — managed API for production
+
+The open-source SDK is for local development and research. For production use:
+
+- **TopHashX Cloud API** — usage-based canonical ID + proof object generation
+- **TopHash Ω∞ Enterprise** — counterfactual intelligence, on-prem/VPC deployment
+- **SOC 2 / FedRAMP-ready** compliance posture (roadmap)
+
+**[→ Request TopHash Cloud access](https://forms.gle/tophash-cloud-signup)**
+
+Design partners get a free structural audit of their graph data, a 12-month price lock, and direct input on the v0.2 roadmap (node-label-aware fingerprints, weighted-graph support, streaming-graph mode). Email `founders@tophash.io` or use the signup form above.
+
+---
+
 ## What's in this repo
 
 This is the **v0 reference implementation** of TopHash — a Python package implementing all three layers from the technical specification, plus a complete benchmark suite that validates the primitive against real public datasets across five verticals plus three TUDatasets (MUTAG, PROTEINS, NCI1).
