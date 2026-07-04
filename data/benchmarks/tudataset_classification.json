@@ -1,0 +1,101 @@
+{
+  "MUTAG": {
+    "n_graphs": 188,
+    "class_balance": {
+      "class_1": 125,
+      "class_0": 63
+    },
+    "majority_pct": 0.6648936170212766,
+    "Dummy_most_frequent": {
+      "accuracy_mean": 0.6649122807017545,
+      "accuracy_std": 0.02280701754385967
+    },
+    "WL_baseline_128D": {
+      "accuracy_mean": 0.814327485380117,
+      "accuracy_std": 0.07067621032322702,
+      "beats_dummy_by": 0.14941520467836256,
+      "feature_dim": 128,
+      "feature_time_per_graph_ms": 0.4344475957449058
+    },
+    "TopHash_v3_52D": {
+      "accuracy_mean": 0.8619883040935672,
+      "accuracy_std": 0.04752339100329833,
+      "beats_dummy_by": 0.19707602339181274,
+      "feature_dim": 52,
+      "feature_time_per_graph_ms": 2.330019367022071
+    },
+    "TopHash_v3E_156D": {
+      "accuracy_mean": 0.8777777777777779,
+      "accuracy_std": 0.04703514261426407,
+      "beats_dummy_by": 0.21286549707602342,
+      "feature_dim": 156,
+      "feature_time_per_graph_ms": 4.389045569152895
+    }
+  },
+  "PROTEINS": {
+    "n_graphs": 1113,
+    "class_balance": {
+      "class_0": 663,
+      "class_1": 450
+    },
+    "majority_pct": 0.5956873315363881,
+    "Dummy_most_frequent": {
+      "accuracy_mean": 0.5956805019305019,
+      "accuracy_std": 0.0016587508548343791
+    },
+    "WL_baseline_128D": {
+      "accuracy_mean": 0.7188626126126126,
+      "accuracy_std": 0.04313621454543158,
+      "beats_dummy_by": 0.12318211068211071,
+      "feature_dim": 128,
+      "feature_time_per_graph_ms": 0.9001550242591696
+    },
+    "TopHash_v3_52D": {
+      "accuracy_mean": 0.7475064350064351,
+      "accuracy_std": 0.03600327155474665,
+      "beats_dummy_by": 0.15182593307593317,
+      "feature_dim": 52,
+      "feature_time_per_graph_ms": 8.925857001796812
+    },
+    "TopHash_v3E_156D": {
+      "accuracy_mean": 0.7457609395109396,
+      "accuracy_std": 0.03484947473732983,
+      "beats_dummy_by": 0.15008043758043765,
+      "feature_dim": 156,
+      "feature_time_per_graph_ms": 14.211885560647223
+    }
+  },
+  "NCI1": {
+    "n_graphs": 500,
+    "class_balance": {
+      "class_1": 243,
+      "class_0": 257
+    },
+    "majority_pct": 0.514,
+    "Dummy_most_frequent": {
+      "accuracy_mean": 0.5139999999999999,
+      "accuracy_std": 0.009165151389911688
+    },
+    "WL_baseline_128D": {
+      "accuracy_mean": 0.69,
+      "accuracy_std": 0.04494441010848846,
+      "beats_dummy_by": 0.17600000000000005,
+      "feature_dim": 128,
+      "feature_time_per_graph_ms": 0.6625019200000679
+    },
+    "TopHash_v3_52D": {
+      "accuracy_mean": 0.71,
+      "accuracy_std": 0.041231056256176596,
+      "beats_dummy_by": 0.19600000000000006,
+      "feature_dim": 52,
+      "feature_time_per_graph_ms": 3.4354954800000996
+    },
+    "TopHash_v3E_156D": {
+      "accuracy_mean": 0.73,
+      "accuracy_std": 0.06708203932499368,
+      "beats_dummy_by": 0.21600000000000008,
+      "feature_dim": 156,
+      "feature_time_per_graph_ms": 7.320399301999714
+    }
+  }
+}

@@ -30,13 +30,21 @@ skills/
 upload/
 tool-results/
 worklog.md
+download/TopHash_Unicorn_Pitch_Deck.pptx
+download/TopHash_Investment_Memo.pdf
+# (keep TopHash_Implementation_Report.pdf — it's the v0 deliverable)
 
 # TopHash — exclude large raw dataset caches (regenerable via scripts/fetch_datasets.py)
-# Keep benchmark results and charts (small, valuable)
+# Keep benchmark JSON results and charts (small, valuable)
 data/*/*.pkl
 data/*/*.txt.gz
 data/*/*.csv
 data/*/*.tar.gz
+data/*/*.zip
+data/tudataset/MUTAG/
+data/tudataset/PROTEINS/
+data/tudataset/NCI1/
+data/tudataset/raw/
 
 # Local environment
 .env

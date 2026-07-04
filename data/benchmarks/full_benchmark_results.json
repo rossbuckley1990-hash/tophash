@@ -10,18 +10,23 @@
     },
     "bench_canon_isomorphism": {
       "n_graphs_tested": 26,
+      "canon_engine": "pynauty",
+      "exactness_guaranteed": true,
       "permutation_invariance": {
         "n_tested": 26,
         "n_passed": 26,
         "pass_rate": 1.0
       },
       "isomorphism_vs_nx": {
+        "n_pairs_testable": 2,
         "n_pairs_tested": 2,
         "n_agree": 2,
         "agreement_rate": 1.0,
+        "agreement_rate_str": "100.0%",
         "n_both_iso": 2,
         "n_both_noniso": 0,
-        "n_disagreements": 0
+        "n_disagreements": 0,
+        "note": null
       },
       "uniqueness": {
         "n_ids": 26,
@@ -29,139 +34,186 @@
         "uniqueness_rate": 0.7307692307692307
       },
       "timing": {
-        "mean_id_time_ms": 3.4347848846454534,
-        "p95_id_time_ms": 22.460733249999976,
-        "max_id_time_ms": 24.234354999862262,
-        "total_id_time_s": 0.0893044070007818
+        "mean_id_time_ms": 0.7143893077367325,
+        "p95_id_time_ms": 1.7235124998933316,
+        "max_id_time_ms": 1.8740100003924454,
+        "total_id_time_s": 0.018574122001155047
       }
     },
     "bench_omega_counterfactual": {
       "n_graphs_tested": 10,
       "total_perturbations_evaluated": 150,
       "avg_invariant_channels": 10.2,
-      "avg_fragile_channels": 2.4,
+      "avg_fragile_channels": 2.6,
       "min_edit_certificates_found": 10,
       "min_edit_rate": 1.0,
+      "oracle_verification": {
+        "n_oracle_checks_performed": 10,
+        "n_certs_oracle_verified": 0,
+        "n_true_negatives_oracle_verified": 0,
+        "oracle_verified_rate": 0.0,
+        "oracle_note": "Stoer-Wagner exact min-cut used as oracle. oracle_verified=True means \u03a9's certificate cost equals the true min-cut."
+      },
       "timing": {
-        "mean_ms": 37.301331700109586,
-        "max_ms": 62.28220200046053,
-        "total_s": 0.37301331700109586
+        "mean_ms": 37.352708199978224,
+        "max_ms": 57.09039500015933,
+        "total_s": 0.37352708199978224
       },
       "response_stats": {
-        "mean_response": 0.17877212497334774,
+        "mean_response": 0.1916178253753417,
         "max_response": 1.0,
-        "std_response": 0.30213566715742807
+        "std_response": 0.315730617586003
       },
       "per_graph_details": [
         {
           "graph_idx": 0,
           "n_nodes": 7,
           "n_edges": 6,
-          "time_ms": 28.760510999745748,
+          "time_ms": 28.057194000211894,
           "invariant_channels": 9,
           "fragile_channels": 2,
           "min_edit_found": true,
           "min_edit_perturbation": "edge_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 1,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 1,
           "n_nodes": 10,
           "n_edges": 9,
-          "time_ms": 23.867812999924354,
+          "time_ms": 25.788392000322347,
           "invariant_channels": 10,
-          "fragile_channels": 1,
+          "fragile_channels": 4,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.2
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 9,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 2,
           "n_nodes": 6,
           "n_edges": 5,
-          "time_ms": 21.17505599926517,
+          "time_ms": 21.503472999938822,
           "invariant_channels": 9,
           "fragile_channels": 2,
           "min_edit_found": true,
-          "min_edit_perturbation": "edge_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 5,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 3,
           "n_nodes": 18,
           "n_edges": 17,
-          "time_ms": 31.641995000427414,
+          "time_ms": 30.748897999728797,
           "invariant_channels": 11,
-          "fragile_channels": 3,
+          "fragile_channels": 2,
           "min_edit_found": true,
-          "min_edit_perturbation": "edge_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 17,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 4,
           "n_nodes": 7,
           "n_edges": 6,
-          "time_ms": 22.61012800045137,
+          "time_ms": 22.975910999775806,
           "invariant_channels": 9,
           "fragile_channels": 2,
           "min_edit_found": true,
           "min_edit_perturbation": "edge_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 1,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 5,
           "n_nodes": 41,
           "n_edges": 40,
-          "time_ms": 62.28220200046053,
+          "time_ms": 57.09039500015933,
           "invariant_channels": 11,
-          "fragile_channels": 4,
+          "fragile_channels": 1,
           "min_edit_found": true,
-          "min_edit_perturbation": "edge_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.05,
+          "min_edit_edges_removed": 40,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 6,
           "n_nodes": 40,
           "n_edges": 39,
-          "time_ms": 58.00695200014161,
+          "time_ms": 52.44867500005057,
           "invariant_channels": 11,
-          "fragile_channels": 4,
+          "fragile_channels": 1,
           "min_edit_found": true,
-          "min_edit_perturbation": "edge_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.05,
+          "min_edit_edges_removed": 39,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 7,
           "n_nodes": 36,
           "n_edges": 35,
-          "time_ms": 46.57233099987934,
+          "time_ms": 53.739170999506314,
           "invariant_channels": 11,
-          "fragile_channels": 1,
+          "fragile_channels": 4,
           "min_edit_found": true,
-          "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.05
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 1,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 8,
           "n_nodes": 10,
           "n_edges": 9,
-          "time_ms": 24.766413000179455,
+          "time_ms": 24.51139300046634,
           "invariant_channels": 10,
-          "fragile_channels": 1,
+          "fragile_channels": 4,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.2
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 9,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 9,
           "n_nodes": 38,
           "n_edges": 37,
-          "time_ms": 53.32991600062087,
+          "time_ms": 56.663579999622016,
           "invariant_channels": 11,
           "fragile_channels": 4,
           "min_edit_found": true,
-          "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.3
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 1,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         }
       ]
     }
@@ -176,45 +228,72 @@
       "median_nodes": 12.0
     },
     "bench_v3_classification": {
+      "class_balance": {
+        "n_samples": 31,
+        "n_classes": 2,
+        "label_counts": {
+          "mutagenic": 16,
+          "non_mutagenic": 15
+        },
+        "majority_label": "mutagenic",
+        "majority_pct": 0.5161290322580645
+      },
+      "Dummy_most_frequent": {
+        "accuracy_mean": 0.5166666666666666,
+        "accuracy_std": 0.15723301886761004,
+        "feature_dim": 0,
+        "feature_time_total_s": 0.0,
+        "feature_time_per_graph_ms": 0.0,
+        "n_samples": 31,
+        "interpretation": "Predicts majority class. If TopHash acc \u2248 this, the benchmark is measuring nothing."
+      },
       "WL_baseline": {
         "accuracy_mean": 0.8083333333333332,
         "accuracy_std": 0.15833333333333335,
         "feature_dim": 4,
-        "feature_time_total_s": 0.003339118999974744,
-        "feature_time_per_graph_ms": 0.10771351612821754,
-        "n_samples": 31
+        "feature_time_total_s": 0.004753749999508727,
+        "feature_time_per_graph_ms": 0.15334677417770087,
+        "n_samples": 31,
+        "beats_dummy_by": 0.29166666666666663
       },
       "TopHash_v3_52D": {
         "accuracy_mean": 0.8083333333333332,
         "accuracy_std": 0.15833333333333335,
         "feature_dim": 52,
-        "feature_time_total_s": 0.06414844900064054,
-        "feature_time_per_graph_ms": 2.0693048064722754,
-        "n_samples": 31
+        "feature_time_total_s": 0.04292071599957126,
+        "feature_time_per_graph_ms": 1.384539225792621,
+        "n_samples": 31,
+        "beats_dummy_by": 0.29166666666666663
       },
       "TopHash_v3E_156D": {
         "accuracy_mean": 0.8083333333333332,
         "accuracy_std": 0.15833333333333335,
         "feature_dim": 156,
-        "feature_time_total_s": 0.10168347599937988,
-        "feature_time_per_graph_ms": 3.2801121290122546,
-        "n_samples": 31
+        "feature_time_total_s": 0.08090023300064786,
+        "feature_time_per_graph_ms": 2.6096849355047698,
+        "n_samples": 31,
+        "beats_dummy_by": 0.29166666666666663
       }
     },
     "bench_canon_isomorphism": {
       "n_graphs_tested": 30,
+      "canon_engine": "pynauty",
+      "exactness_guaranteed": true,
       "permutation_invariance": {
         "n_tested": 30,
         "n_passed": 30,
         "pass_rate": 1.0
       },
       "isomorphism_vs_nx": {
+        "n_pairs_testable": 19,
         "n_pairs_tested": 19,
         "n_agree": 19,
         "agreement_rate": 1.0,
+        "agreement_rate_str": "100.0%",
         "n_both_iso": 19,
         "n_both_noniso": 0,
-        "n_disagreements": 0
+        "n_disagreements": 0,
+        "note": null
       },
       "uniqueness": {
         "n_ids": 30,
@@ -222,10 +301,10 @@
         "uniqueness_rate": 0.36666666666666664
       },
       "timing": {
-        "mean_id_time_ms": 1.8980095333972713,
-        "p95_id_time_ms": 4.809828849829493,
-        "max_id_time_ms": 33.62392300005013,
-        "total_id_time_s": 0.05694028600191814
+        "mean_id_time_ms": 0.3678990333658779,
+        "p95_id_time_ms": 0.5423183496077398,
+        "max_id_time_ms": 0.6256340002437355,
+        "total_id_time_s": 0.011036971000976337
       }
     },
     "bench_omega_counterfactual": {
@@ -235,126 +314,173 @@
       "avg_fragile_channels": 1.0,
       "min_edit_certificates_found": 10,
       "min_edit_rate": 1.0,
+      "oracle_verification": {
+        "n_oracle_checks_performed": 10,
+        "n_certs_oracle_verified": 0,
+        "n_true_negatives_oracle_verified": 0,
+        "oracle_verified_rate": 0.0,
+        "oracle_note": "Stoer-Wagner exact min-cut used as oracle. oracle_verified=True means \u03a9's certificate cost equals the true min-cut."
+      },
       "timing": {
-        "mean_ms": 34.293945399895165,
-        "max_ms": 41.02836499987461,
-        "total_s": 0.34293945399895165
+        "mean_ms": 27.0582653000929,
+        "max_ms": 29.2264099998647,
+        "total_s": 0.270582653000929
       },
       "response_stats": {
-        "mean_response": 0.12549126387738394,
+        "mean_response": 0.12886430367620777,
         "max_response": 1.0,
-        "std_response": 0.2445028708689854
+        "std_response": 0.24479350897212843
       },
       "per_graph_details": [
         {
           "graph_idx": 0,
           "n_nodes": 10,
           "n_edges": 10,
-          "time_ms": 31.197449999126547,
-          "invariant_channels": 8,
+          "time_ms": 26.894157000242558,
+          "invariant_channels": 7,
           "fragile_channels": 1,
           "min_edit_found": true,
-          "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.3
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 2,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 1,
           "n_nodes": 13,
           "n_edges": 13,
-          "time_ms": 41.02836499987461,
+          "time_ms": 28.945320000275387,
           "invariant_channels": 10,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.15
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 4,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 2,
           "n_nodes": 11,
           "n_edges": 11,
-          "time_ms": 30.194848999599344,
+          "time_ms": 27.490239000144356,
           "invariant_channels": 7,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.2
+          "min_edit_scale": 0.2,
+          "min_edit_edges_removed": 4,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 3,
           "n_nodes": 14,
           "n_edges": 14,
-          "time_ms": 35.45672100062802,
-          "invariant_channels": 11,
+          "time_ms": 29.2264099998647,
+          "invariant_channels": 12,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.2
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 4,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 4,
           "n_nodes": 12,
           "n_edges": 12,
-          "time_ms": 40.443922999656934,
+          "time_ms": 27.02305900038482,
           "invariant_channels": 10,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.15
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 4,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 5,
           "n_nodes": 12,
           "n_edges": 12,
-          "time_ms": 28.12402099971223,
+          "time_ms": 26.67237399964506,
           "invariant_channels": 10,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.15
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 4,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 6,
           "n_nodes": 11,
           "n_edges": 11,
-          "time_ms": 34.486273999391415,
+          "time_ms": 25.948791999326204,
           "invariant_channels": 7,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.2
+          "min_edit_scale": 0.2,
+          "min_edit_edges_removed": 4,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 7,
           "n_nodes": 11,
           "n_edges": 11,
-          "time_ms": 39.422702000592835,
+          "time_ms": 26.1541390000275,
           "invariant_channels": 7,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.2
+          "min_edit_scale": 0.2,
+          "min_edit_edges_removed": 4,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 8,
           "n_nodes": 11,
           "n_edges": 11,
-          "time_ms": 26.510390999646916,
+          "time_ms": 25.65077800045401,
           "invariant_channels": 7,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.2
+          "min_edit_scale": 0.2,
+          "min_edit_edges_removed": 4,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 9,
           "n_nodes": 12,
           "n_edges": 12,
-          "time_ms": 36.074758000722795,
+          "time_ms": 26.57738500056439,
           "invariant_channels": 10,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.15
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 4,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         }
       ]
     }
@@ -371,18 +497,23 @@
     "bench_v3_classification": null,
     "bench_canon_isomorphism": {
       "n_graphs_tested": 11,
+      "canon_engine": "pynauty",
+      "exactness_guaranteed": true,
       "permutation_invariance": {
         "n_tested": 11,
         "n_passed": 11,
         "pass_rate": 1.0
       },
       "isomorphism_vs_nx": {
+        "n_pairs_testable": 0,
         "n_pairs_tested": 0,
         "n_agree": 0,
-        "agreement_rate": 0.0,
+        "agreement_rate": null,
+        "agreement_rate_str": "n/a",
         "n_both_iso": 0,
         "n_both_noniso": 0,
-        "n_disagreements": 0
+        "n_disagreements": 0,
+        "note": "n/a means 0 testable pairs (graphs had different node/edge counts)"
       },
       "uniqueness": {
         "n_ids": 11,
@@ -390,139 +521,186 @@
         "uniqueness_rate": 1.0
       },
       "timing": {
-        "mean_id_time_ms": 6.157597727410161,
-        "p95_id_time_ms": 22.499722000247857,
-        "max_id_time_ms": 32.53127300013148,
-        "total_id_time_s": 0.06773357500151178
+        "mean_id_time_ms": 0.588249636414482,
+        "p95_id_time_ms": 1.0002100002566294,
+        "max_id_time_ms": 1.2647090006794315,
+        "total_id_time_s": 0.006470746000559302
       }
     },
     "bench_omega_counterfactual": {
       "n_graphs_tested": 10,
       "total_perturbations_evaluated": 150,
-      "avg_invariant_channels": 11.1,
-      "avg_fragile_channels": 1.1,
+      "avg_invariant_channels": 11.0,
+      "avg_fragile_channels": 1.4,
       "min_edit_certificates_found": 10,
       "min_edit_rate": 1.0,
+      "oracle_verification": {
+        "n_oracle_checks_performed": 10,
+        "n_certs_oracle_verified": 0,
+        "n_true_negatives_oracle_verified": 0,
+        "oracle_verified_rate": 0.0,
+        "oracle_note": "Stoer-Wagner exact min-cut used as oracle. oracle_verified=True means \u03a9's certificate cost equals the true min-cut."
+      },
       "timing": {
-        "mean_ms": 149.21247149986812,
-        "max_ms": 1004.1339559993503,
-        "total_s": 1.4921247149986812
+        "mean_ms": 125.33844839990707,
+        "max_ms": 815.389755999604,
+        "total_s": 1.2533844839990707
       },
       "response_stats": {
-        "mean_response": 0.12105829825052349,
+        "mean_response": 0.1293725650084266,
         "max_response": 1.0,
-        "std_response": 0.2554476073038766
+        "std_response": 0.2646365846345396
       },
       "per_graph_details": [
         {
           "graph_idx": 0,
           "n_nodes": 11,
           "n_edges": 13,
-          "time_ms": 41.46292800032825,
+          "time_ms": 25.759499999367108,
           "invariant_channels": 9,
           "fragile_channels": 2,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.3
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 3,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 1,
           "n_nodes": 19,
           "n_edges": 23,
-          "time_ms": 40.54682799960574,
-          "invariant_channels": 12,
+          "time_ms": 34.70473400011542,
+          "invariant_channels": 11,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.1
+          "min_edit_scale": 0.05,
+          "min_edit_edges_removed": 3,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 2,
           "n_nodes": 35,
           "n_edges": 45,
-          "time_ms": 78.21615299963014,
+          "time_ms": 67.48247100040317,
           "invariant_channels": 14,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_scale": 0.05,
+          "min_edit_edges_removed": 6,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 3,
           "n_nodes": 51,
           "n_edges": 66,
-          "time_ms": 154.8968329998388,
+          "time_ms": 114.04402700009086,
           "invariant_channels": 14,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.05
+          "min_edit_scale": 0.05,
+          "min_edit_edges_removed": 8,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 4,
           "n_nodes": 102,
           "n_edges": 134,
-          "time_ms": 1004.1339559993503,
+          "time_ms": 815.389755999604,
           "invariant_channels": 14,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 6,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 5,
           "n_nodes": 12,
           "n_edges": 11,
-          "time_ms": 55.807780999202805,
-          "invariant_channels": 8,
+          "time_ms": 76.4922469998055,
+          "invariant_channels": 7,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 2,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 6,
           "n_nodes": 14,
           "n_edges": 13,
-          "time_ms": 29.438077000122576,
-          "invariant_channels": 9,
+          "time_ms": 29.701868999836734,
+          "invariant_channels": 10,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 2,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 7,
           "n_nodes": 17,
           "n_edges": 16,
-          "time_ms": 32.26756100048078,
+          "time_ms": 32.68853200006561,
           "invariant_channels": 11,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_scale": 0.05,
+          "min_edit_edges_removed": 2,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 8,
           "n_nodes": 20,
           "n_edges": 19,
-          "time_ms": 34.492701000090165,
+          "time_ms": 36.19734000039898,
           "invariant_channels": 13,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_scale": 0.05,
+          "min_edit_edges_removed": 2,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 9,
           "n_nodes": 6,
           "n_edges": 6,
-          "time_ms": 20.861897000031604,
+          "time_ms": 20.92400799938332,
           "invariant_channels": 7,
-          "fragile_channels": 1,
+          "fragile_channels": 4,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.3
+          "min_edit_scale": 0.3,
+          "min_edit_edges_removed": 4,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         }
       ]
     }
@@ -539,18 +717,23 @@
     "bench_v3_classification": null,
     "bench_canon_isomorphism": {
       "n_graphs_tested": 3,
+      "canon_engine": "pynauty",
+      "exactness_guaranteed": true,
       "permutation_invariance": {
         "n_tested": 3,
         "n_passed": 3,
         "pass_rate": 1.0
       },
       "isomorphism_vs_nx": {
+        "n_pairs_testable": 0,
         "n_pairs_tested": 0,
         "n_agree": 0,
-        "agreement_rate": 0.0,
+        "agreement_rate": null,
+        "agreement_rate_str": "n/a",
         "n_both_iso": 0,
         "n_both_noniso": 0,
-        "n_disagreements": 0
+        "n_disagreements": 0,
+        "note": "n/a means 0 testable pairs (graphs had different node/edge counts)"
       },
       "uniqueness": {
         "n_ids": 3,
@@ -558,117 +741,156 @@
         "uniqueness_rate": 1.0
       },
       "timing": {
-        "mean_id_time_ms": 3.7619583332949937,
-        "p95_id_time_ms": 4.88767810020363,
-        "max_id_time_ms": 4.994482000256539,
-        "total_id_time_s": 0.011285874999884982
+        "mean_id_time_ms": 2.4169259998719403,
+        "p95_id_time_ms": 3.962823399615445,
+        "max_id_time_ms": 4.210223999507434,
+        "total_id_time_s": 0.007250777999615821
       }
     },
     "bench_omega_counterfactual": {
       "n_graphs_tested": 8,
       "total_perturbations_evaluated": 120,
-      "avg_invariant_channels": 10.0,
+      "avg_invariant_channels": 10.375,
       "avg_fragile_channels": 1.875,
-      "min_edit_certificates_found": 8,
-      "min_edit_rate": 1.0,
+      "min_edit_certificates_found": 7,
+      "min_edit_rate": 0.875,
+      "oracle_verification": {
+        "n_oracle_checks_performed": 7,
+        "n_certs_oracle_verified": 0,
+        "n_true_negatives_oracle_verified": 1,
+        "oracle_verified_rate": 0.0,
+        "oracle_note": "Stoer-Wagner exact min-cut used as oracle. oracle_verified=True means \u03a9's certificate cost equals the true min-cut."
+      },
       "timing": {
-        "mean_ms": 8207.316960125012,
-        "max_ms": 40793.228653999904,
-        "total_s": 65.65853568100009
+        "mean_ms": 8971.921240750022,
+        "max_ms": 40265.0708000001,
+        "total_s": 71.77536992600018
       },
       "response_stats": {
-        "mean_response": 0.16461733520108549,
+        "mean_response": 0.16264014757061196,
         "max_response": 1.0,
-        "std_response": 0.2888778119668327
+        "std_response": 0.28753943442865393
       },
       "per_graph_details": [
         {
           "graph_idx": 0,
           "n_nodes": 20,
           "n_edges": 108,
-          "time_ms": 52.16850700071518,
+          "time_ms": 53.912506000415306,
           "invariant_channels": 10,
           "fragile_channels": 5,
-          "min_edit_found": true,
-          "min_edit_perturbation": "motif_mask",
-          "min_edit_scale": 0.3
+          "min_edit_found": false,
+          "min_edit_perturbation": null,
+          "min_edit_scale": null,
+          "min_edit_edges_removed": null,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": null,
+          "true_negative_verified": true
         },
         {
           "graph_idx": 1,
           "n_nodes": 30,
           "n_edges": 171,
-          "time_ms": 65.27533799999219,
+          "time_ms": 72.05445799991139,
           "invariant_channels": 10,
-          "fragile_channels": 3,
+          "fragile_channels": 2,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.3
+          "min_edit_scale": 0.1,
+          "min_edit_edges_removed": 20,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 2,
           "n_nodes": 50,
           "n_edges": 495,
-          "time_ms": 380.58413099952304,
+          "time_ms": 890.8810599996286,
           "invariant_channels": 10,
-          "fragile_channels": 1,
+          "fragile_channels": 2,
           "min_edit_found": true,
-          "min_edit_perturbation": "edge_deletion",
-          "min_edit_scale": 0.15
+          "min_edit_perturbation": "motif_mask",
+          "min_edit_scale": 0.3,
+          "min_edit_edges_removed": 385,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 3,
           "n_nodes": 80,
           "n_edges": 1166,
-          "time_ms": 3041.681416000756,
+          "time_ms": 3942.6278010005262,
           "invariant_channels": 10,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "motif_mask",
-          "min_edit_scale": 0.2
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 800,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 4,
           "n_nodes": 120,
           "n_edges": 2070,
-          "time_ms": 7713.866609999968,
+          "time_ms": 5465.971931999775,
           "invariant_channels": 10,
           "fragile_channels": 1,
           "min_edit_found": true,
-          "min_edit_perturbation": "motif_mask",
-          "min_edit_scale": 0.15
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.3,
+          "min_edit_edges_removed": 594,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 5,
           "n_nodes": 200,
           "n_edges": 3005,
-          "time_ms": 6102.271209999344,
+          "time_ms": 7491.0019110002395,
           "invariant_channels": 10,
           "fragile_channels": 2,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.3
+          "min_edit_scale": 0.1,
+          "min_edit_edges_removed": 515,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 6,
           "n_nodes": 300,
           "n_edges": 4596,
-          "time_ms": 7509.4598149999,
+          "time_ms": 13593.849457999568,
           "invariant_channels": 10,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.2
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 224,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 7,
           "n_nodes": 500,
           "n_edges": 10655,
-          "time_ms": 40793.228653999904,
-          "invariant_channels": 10,
+          "time_ms": 40265.0708000001,
+          "invariant_channels": 13,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.1
+          "min_edit_scale": 0.2,
+          "min_edit_edges_removed": 3927,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         }
       ]
     }
@@ -687,18 +909,23 @@
     },
     "bench_canon_isomorphism": {
       "n_graphs_tested": 10,
+      "canon_engine": "pynauty",
+      "exactness_guaranteed": true,
       "permutation_invariance": {
         "n_tested": 10,
         "n_passed": 10,
         "pass_rate": 1.0
       },
       "isomorphism_vs_nx": {
+        "n_pairs_testable": 0,
         "n_pairs_tested": 0,
         "n_agree": 0,
-        "agreement_rate": 0.0,
+        "agreement_rate": null,
+        "agreement_rate_str": "n/a",
         "n_both_iso": 0,
         "n_both_noniso": 0,
-        "n_disagreements": 0
+        "n_disagreements": 0,
+        "note": "n/a means 0 testable pairs (graphs had different node/edge counts)"
       },
       "uniqueness": {
         "n_ids": 10,
@@ -706,139 +933,966 @@
         "uniqueness_rate": 1.0
       },
       "timing": {
-        "mean_id_time_ms": 1.8739093997282907,
-        "p95_id_time_ms": 3.6806511499889876,
-        "max_id_time_ms": 4.563430999951379,
-        "total_id_time_s": 0.018739093997282907
+        "mean_id_time_ms": 3.316186400115839,
+        "p95_id_time_ms": 6.034231200192149,
+        "max_id_time_ms": 7.484277000003203,
+        "total_id_time_s": 0.03316186400115839
       }
     },
     "bench_omega_counterfactual": {
       "n_graphs_tested": 10,
       "total_perturbations_evaluated": 150,
-      "avg_invariant_channels": 10.1,
-      "avg_fragile_channels": 2.4,
-      "min_edit_certificates_found": 9,
-      "min_edit_rate": 0.9,
+      "avg_invariant_channels": 10.0,
+      "avg_fragile_channels": 2.5,
+      "min_edit_certificates_found": 10,
+      "min_edit_rate": 1.0,
+      "oracle_verification": {
+        "n_oracle_checks_performed": 10,
+        "n_certs_oracle_verified": 0,
+        "n_true_negatives_oracle_verified": 0,
+        "oracle_verified_rate": 0.0,
+        "oracle_note": "Stoer-Wagner exact min-cut used as oracle. oracle_verified=True means \u03a9's certificate cost equals the true min-cut."
+      },
       "timing": {
-        "mean_ms": 1754.3367783000576,
-        "max_ms": 7016.08732800014,
-        "total_s": 17.543367783000576
+        "mean_ms": 2138.6567771000045,
+        "max_ms": 7901.1873210001795,
+        "total_s": 21.386567771000045
       },
       "response_stats": {
-        "mean_response": 0.18661476566324328,
+        "mean_response": 0.18748550053989824,
         "max_response": 1.0,
-        "std_response": 0.30523976593671004
+        "std_response": 0.30480677626153135
       },
       "per_graph_details": [
         {
           "graph_idx": 0,
           "n_nodes": 30,
           "n_edges": 186,
-          "time_ms": 84.96511700013798,
+          "time_ms": 99.69587800060253,
           "invariant_channels": 10,
           "fragile_channels": 3,
-          "min_edit_found": false,
-          "min_edit_perturbation": null,
-          "min_edit_scale": null
+          "min_edit_found": true,
+          "min_edit_perturbation": "edge_deletion",
+          "min_edit_scale": 0.3,
+          "min_edit_edges_removed": 48,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 1,
           "n_nodes": 50,
           "n_edges": 480,
-          "time_ms": 492.88034599976527,
+          "time_ms": 281.73437399982504,
           "invariant_channels": 10,
-          "fragile_channels": 1,
+          "fragile_channels": 2,
           "min_edit_found": true,
-          "min_edit_perturbation": "motif_mask",
-          "min_edit_scale": 0.3
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 170,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 2,
           "n_nodes": 80,
           "n_edges": 861,
-          "time_ms": 941.9802820002587,
+          "time_ms": 1334.1388609997011,
           "invariant_channels": 10,
           "fragile_channels": 1,
           "min_edit_found": true,
           "min_edit_perturbation": "edge_deletion",
-          "min_edit_scale": 0.3
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 120,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 3,
           "n_nodes": 120,
           "n_edges": 1797,
-          "time_ms": 3750.2207750003436,
+          "time_ms": 4606.974377999904,
           "invariant_channels": 10,
           "fragile_channels": 1,
           "min_edit_found": true,
-          "min_edit_perturbation": "edge_deletion",
-          "min_edit_scale": 0.3
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.3,
+          "min_edit_edges_removed": 853,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 4,
           "n_nodes": 200,
           "n_edges": 3622,
-          "time_ms": 7016.08732800014,
+          "time_ms": 7901.1873210001795,
           "invariant_channels": 10,
           "fragile_channels": 2,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.1
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 910,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 5,
           "n_nodes": 30,
           "n_edges": 44,
-          "time_ms": 50.62672799977008,
-          "invariant_channels": 11,
+          "time_ms": 54.8328680006307,
+          "invariant_channels": 10,
           "fragile_channels": 2,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.15
+          "min_edit_scale": 0.1,
+          "min_edit_edges_removed": 12,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 6,
           "n_nodes": 50,
           "n_edges": 199,
-          "time_ms": 138.2947479996801,
+          "time_ms": 123.25729500025773,
           "invariant_channels": 10,
-          "fragile_channels": 4,
+          "fragile_channels": 3,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.2
+          "min_edit_scale": 0.2,
+          "min_edit_edges_removed": 89,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 7,
           "n_nodes": 80,
           "n_edges": 525,
-          "time_ms": 518.7181960000089,
+          "time_ms": 432.09298999954626,
           "invariant_channels": 10,
-          "fragile_channels": 2,
+          "fragile_channels": 3,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.15
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 18,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 8,
           "n_nodes": 120,
           "n_edges": 504,
-          "time_ms": 1129.4694040007016,
+          "time_ms": 1762.2628999997687,
           "invariant_channels": 10,
-          "fragile_channels": 4,
+          "fragile_channels": 5,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.05
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 183,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         },
         {
           "graph_idx": 9,
           "n_nodes": 200,
           "n_edges": 1629,
-          "time_ms": 3420.1248589997704,
+          "time_ms": 4790.3909059996295,
           "invariant_channels": 10,
-          "fragile_channels": 4,
+          "fragile_channels": 3,
           "min_edit_found": true,
           "min_edit_perturbation": "node_deletion",
-          "min_edit_scale": 0.02
+          "min_edit_scale": 0.3,
+          "min_edit_edges_removed": 935,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        }
+      ]
+    }
+  },
+  "tudataset_MUTAG": {
+    "vertical": "tudataset_MUTAG",
+    "n_graphs": 188,
+    "graph_size_stats": {
+      "min_nodes": 10,
+      "max_nodes": 28,
+      "mean_nodes": 17.930851063829788,
+      "median_nodes": 17.5
+    },
+    "bench_v3_classification": {
+      "class_balance": {
+        "n_samples": 188,
+        "n_classes": 2,
+        "label_counts": {
+          "class_1": 125,
+          "class_0": 63
+        },
+        "majority_pct": 0.6648936170212766
+      },
+      "Dummy_most_frequent": {
+        "accuracy_mean": 0.6649122807017545,
+        "accuracy_std": 0.02280701754385967,
+        "feature_dim": 0,
+        "interpretation": "Predicts majority class. If TopHash acc \u2248 this, the benchmark is measuring nothing."
+      },
+      "WL_baseline_128D": {
+        "accuracy_mean": 0.814327485380117,
+        "accuracy_std": 0.07067621032322702,
+        "feature_dim": 128,
+        "beats_dummy_by": 0.14941520467836256,
+        "feature_time_per_graph_ms": 0.4344475957449058,
+        "n_samples": 188
+      },
+      "TopHash_v3_52D": {
+        "accuracy_mean": 0.8619883040935672,
+        "accuracy_std": 0.04752339100329833,
+        "feature_dim": 52,
+        "beats_dummy_by": 0.19707602339181274,
+        "feature_time_per_graph_ms": 2.330019367022071,
+        "n_samples": 188
+      },
+      "TopHash_v3E_156D": {
+        "accuracy_mean": 0.8777777777777779,
+        "accuracy_std": 0.04703514261426407,
+        "feature_dim": 156,
+        "beats_dummy_by": 0.21286549707602342,
+        "feature_time_per_graph_ms": 4.389045569152895,
+        "n_samples": 188
+      }
+    },
+    "bench_canon_isomorphism": {
+      "n_graphs_tested": 30,
+      "canon_engine": "pynauty",
+      "exactness_guaranteed": true,
+      "permutation_invariance": {
+        "n_tested": 30,
+        "n_passed": 30,
+        "pass_rate": 1.0
+      },
+      "isomorphism_vs_nx": {
+        "n_pairs_testable": 12,
+        "n_pairs_tested": 12,
+        "n_agree": 12,
+        "agreement_rate": 1.0,
+        "agreement_rate_str": "100.0%",
+        "n_both_iso": 3,
+        "n_both_noniso": 9,
+        "n_disagreements": 0,
+        "note": null
+      },
+      "uniqueness": {
+        "n_ids": 30,
+        "n_unique": 26,
+        "uniqueness_rate": 0.8666666666666667
+      },
+      "timing": {
+        "mean_id_time_ms": 1.014077766740229,
+        "p95_id_time_ms": 1.4882089001730492,
+        "max_id_time_ms": 1.8993040002897033,
+        "total_id_time_s": 0.03042233300220687
+      }
+    },
+    "bench_omega_counterfactual": {
+      "n_graphs_tested": 10,
+      "total_perturbations_evaluated": 150,
+      "avg_invariant_channels": 11.4,
+      "avg_fragile_channels": 1.0,
+      "min_edit_certificates_found": 10,
+      "min_edit_rate": 1.0,
+      "oracle_verification": {
+        "n_oracle_checks_performed": 10,
+        "n_certs_oracle_verified": 0,
+        "n_true_negatives_oracle_verified": 0,
+        "oracle_verified_rate": 0.0,
+        "oracle_note": "Stoer-Wagner exact min-cut used as oracle. oracle_verified=True means \u03a9's certificate cost equals the true min-cut."
+      },
+      "timing": {
+        "mean_ms": 42.79681200014238,
+        "max_ms": 77.20560600046156,
+        "total_s": 0.4279681200014238
+      },
+      "response_stats": {
+        "mean_response": 0.11288303998212565,
+        "max_response": 1.0,
+        "std_response": 0.24637041684857225
+      },
+      "per_graph_details": [
+        {
+          "graph_idx": 0,
+          "n_nodes": 17,
+          "n_edges": 19,
+          "time_ms": 49.36032499972498,
+          "invariant_channels": 11,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.1,
+          "min_edit_edges_removed": 5,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 1,
+          "n_nodes": 13,
+          "n_edges": 14,
+          "time_ms": 36.21997099980945,
+          "invariant_channels": 11,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2,
+          "min_edit_edges_removed": 7,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 2,
+          "n_nodes": 13,
+          "n_edges": 14,
+          "time_ms": 38.22765099994285,
+          "invariant_channels": 11,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 5,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 3,
+          "n_nodes": 19,
+          "n_edges": 22,
+          "time_ms": 49.78490699977556,
+          "invariant_channels": 12,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.1,
+          "min_edit_edges_removed": 5,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 4,
+          "n_nodes": 11,
+          "n_edges": 11,
+          "time_ms": 27.91723200061824,
+          "invariant_channels": 9,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.05,
+          "min_edit_edges_removed": 3,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 5,
+          "n_nodes": 28,
+          "n_edges": 31,
+          "time_ms": 77.20560600046156,
+          "invariant_channels": 14,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 3,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 6,
+          "n_nodes": 16,
+          "n_edges": 17,
+          "time_ms": 37.40609900069103,
+          "invariant_channels": 13,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 6,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 7,
+          "n_nodes": 20,
+          "n_edges": 22,
+          "time_ms": 53.32451600042987,
+          "invariant_channels": 12,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 5,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 8,
+          "n_nodes": 12,
+          "n_edges": 13,
+          "time_ms": 26.655188999939128,
+          "invariant_channels": 10,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.05,
+          "min_edit_edges_removed": 3,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 9,
+          "n_nodes": 17,
+          "n_edges": 19,
+          "time_ms": 31.866624000031152,
+          "invariant_channels": 11,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.1,
+          "min_edit_edges_removed": 5,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        }
+      ]
+    }
+  },
+  "tudataset_PROTEINS": {
+    "vertical": "tudataset_PROTEINS",
+    "n_graphs": 1113,
+    "graph_size_stats": {
+      "min_nodes": 4,
+      "max_nodes": 620,
+      "mean_nodes": 39.05750224618149,
+      "median_nodes": 26.0
+    },
+    "bench_v3_classification": {
+      "class_balance": {
+        "n_samples": 1113,
+        "n_classes": 2,
+        "label_counts": {
+          "class_0": 663,
+          "class_1": 450
+        },
+        "majority_pct": 0.5956873315363881
+      },
+      "Dummy_most_frequent": {
+        "accuracy_mean": 0.5956805019305019,
+        "accuracy_std": 0.0016587508548343791,
+        "feature_dim": 0,
+        "interpretation": "Predicts majority class. If TopHash acc \u2248 this, the benchmark is measuring nothing."
+      },
+      "WL_baseline_128D": {
+        "accuracy_mean": 0.7188626126126126,
+        "accuracy_std": 0.04313621454543158,
+        "feature_dim": 128,
+        "beats_dummy_by": 0.12318211068211071,
+        "feature_time_per_graph_ms": 0.9001550242591696,
+        "n_samples": 1113
+      },
+      "TopHash_v3_52D": {
+        "accuracy_mean": 0.7475064350064351,
+        "accuracy_std": 0.03600327155474665,
+        "feature_dim": 52,
+        "beats_dummy_by": 0.15182593307593317,
+        "feature_time_per_graph_ms": 8.925857001796812,
+        "n_samples": 1113
+      },
+      "TopHash_v3E_156D": {
+        "accuracy_mean": 0.7457609395109396,
+        "accuracy_std": 0.03484947473732983,
+        "feature_dim": 156,
+        "beats_dummy_by": 0.15008043758043765,
+        "feature_time_per_graph_ms": 14.211885560647223,
+        "n_samples": 1113
+      }
+    },
+    "bench_canon_isomorphism": {
+      "n_graphs_tested": 18,
+      "canon_engine": "pynauty",
+      "exactness_guaranteed": true,
+      "permutation_invariance": {
+        "n_tested": 18,
+        "n_passed": 18,
+        "pass_rate": 1.0
+      },
+      "isomorphism_vs_nx": {
+        "n_pairs_testable": 0,
+        "n_pairs_tested": 0,
+        "n_agree": 0,
+        "agreement_rate": null,
+        "agreement_rate_str": "n/a",
+        "n_both_iso": 0,
+        "n_both_noniso": 0,
+        "n_disagreements": 0,
+        "note": "n/a means 0 testable pairs (graphs had different node/edge counts)"
+      },
+      "uniqueness": {
+        "n_ids": 18,
+        "n_unique": 18,
+        "uniqueness_rate": 1.0
+      },
+      "timing": {
+        "mean_id_time_ms": 1.1103982223580209,
+        "p95_id_time_ms": 1.9907224499092973,
+        "max_id_time_ms": 3.0426849998548278,
+        "total_id_time_s": 0.019987168002444378
+      }
+    },
+    "bench_omega_counterfactual": {
+      "n_graphs_tested": 10,
+      "total_perturbations_evaluated": 150,
+      "avg_invariant_channels": 11.3,
+      "avg_fragile_channels": 1.2,
+      "min_edit_certificates_found": 9,
+      "min_edit_rate": 0.9,
+      "oracle_verification": {
+        "n_oracle_checks_performed": 9,
+        "n_certs_oracle_verified": 0,
+        "n_true_negatives_oracle_verified": 1,
+        "oracle_verified_rate": 0.0,
+        "oracle_note": "Stoer-Wagner exact min-cut used as oracle. oracle_verified=True means \u03a9's certificate cost equals the true min-cut."
+      },
+      "timing": {
+        "mean_ms": 613.6879219998264,
+        "max_ms": 2402.905441999792,
+        "total_s": 6.136879219998264
+      },
+      "response_stats": {
+        "mean_response": 0.1275621906126037,
+        "max_response": 1.0,
+        "std_response": 0.26332595720279156
+      },
+      "per_graph_details": [
+        {
+          "graph_idx": 0,
+          "n_nodes": 42,
+          "n_edges": 81,
+          "time_ms": 97.14742899996054,
+          "invariant_channels": 11,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2,
+          "min_edit_edges_removed": 26,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 1,
+          "n_nodes": 27,
+          "n_edges": 46,
+          "time_ms": 56.64859199987404,
+          "invariant_channels": 12,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.1,
+          "min_edit_edges_removed": 10,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 2,
+          "n_nodes": 10,
+          "n_edges": 17,
+          "time_ms": 37.77261799950793,
+          "invariant_channels": 10,
+          "fragile_channels": 2,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2,
+          "min_edit_edges_removed": 5,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 3,
+          "n_nodes": 24,
+          "n_edges": 46,
+          "time_ms": 56.066502000248875,
+          "invariant_channels": 11,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.2,
+          "min_edit_edges_removed": 25,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 4,
+          "n_nodes": 11,
+          "n_edges": 21,
+          "time_ms": 46.84840699974302,
+          "invariant_channels": 8,
+          "fragile_channels": 1,
+          "min_edit_found": false,
+          "min_edit_perturbation": null,
+          "min_edit_scale": null,
+          "min_edit_edges_removed": null,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": null,
+          "true_negative_verified": true
+        },
+        {
+          "graph_idx": 5,
+          "n_nodes": 336,
+          "n_edges": 816,
+          "time_ms": 2402.905441999792,
+          "invariant_channels": 14,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "edge_insertion",
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": -1109,
+          "oracle_min_cut_value": 0,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 6,
+          "n_nodes": 108,
+          "n_edges": 243,
+          "time_ms": 1016.9761819997802,
+          "invariant_channels": 14,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "edge_insertion",
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": -111,
+          "oracle_min_cut_value": 0,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 7,
+          "n_nodes": 154,
+          "n_edges": 281,
+          "time_ms": 2299.150338999425,
+          "invariant_channels": 14,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.1,
+          "min_edit_edges_removed": 60,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 8,
+          "n_nodes": 19,
+          "n_edges": 33,
+          "time_ms": 84.14312500008236,
+          "invariant_channels": 12,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 11,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 9,
+          "n_nodes": 11,
+          "n_edges": 19,
+          "time_ms": 39.22058399984962,
+          "invariant_channels": 7,
+          "fragile_channels": 2,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 3,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        }
+      ]
+    }
+  },
+  "tudataset_NCI1": {
+    "vertical": "tudataset_NCI1",
+    "n_graphs": 4110,
+    "graph_size_stats": {
+      "min_nodes": 3,
+      "max_nodes": 111,
+      "mean_nodes": 29.8654501216545,
+      "median_nodes": 27.0
+    },
+    "bench_v3_classification": {
+      "class_balance": {
+        "n_samples": 500,
+        "n_classes": 2,
+        "label_counts": {
+          "class_1": 243,
+          "class_0": 257
+        },
+        "majority_pct": 0.514
+      },
+      "Dummy_most_frequent": {
+        "accuracy_mean": 0.5139999999999999,
+        "accuracy_std": 0.009165151389911688,
+        "feature_dim": 0,
+        "interpretation": "Predicts majority class. If TopHash acc \u2248 this, the benchmark is measuring nothing."
+      },
+      "WL_baseline_128D": {
+        "accuracy_mean": 0.69,
+        "accuracy_std": 0.04494441010848846,
+        "feature_dim": 128,
+        "beats_dummy_by": 0.17600000000000005,
+        "feature_time_per_graph_ms": 0.6625019200000679,
+        "n_samples": 500
+      },
+      "TopHash_v3_52D": {
+        "accuracy_mean": 0.71,
+        "accuracy_std": 0.041231056256176596,
+        "feature_dim": 52,
+        "beats_dummy_by": 0.19600000000000006,
+        "feature_time_per_graph_ms": 3.4354954800000996,
+        "n_samples": 500
+      },
+      "TopHash_v3E_156D": {
+        "accuracy_mean": 0.73,
+        "accuracy_std": 0.06708203932499368,
+        "feature_dim": 156,
+        "beats_dummy_by": 0.21600000000000008,
+        "feature_time_per_graph_ms": 7.320399301999714,
+        "n_samples": 500
+      }
+    },
+    "bench_canon_isomorphism": {
+      "n_graphs_tested": 30,
+      "canon_engine": "pynauty",
+      "exactness_guaranteed": true,
+      "permutation_invariance": {
+        "n_tested": 30,
+        "n_passed": 30,
+        "pass_rate": 1.0
+      },
+      "isomorphism_vs_nx": {
+        "n_pairs_testable": 2,
+        "n_pairs_tested": 2,
+        "n_agree": 2,
+        "agreement_rate": 1.0,
+        "agreement_rate_str": "100.0%",
+        "n_both_iso": 0,
+        "n_both_noniso": 2,
+        "n_disagreements": 0,
+        "note": null
+      },
+      "uniqueness": {
+        "n_ids": 30,
+        "n_unique": 30,
+        "uniqueness_rate": 1.0
+      },
+      "timing": {
+        "mean_id_time_ms": 0.774782533214117,
+        "p95_id_time_ms": 1.0153365996757202,
+        "max_id_time_ms": 1.0334079997846857,
+        "total_id_time_s": 0.023243475996423513
+      }
+    },
+    "bench_omega_counterfactual": {
+      "n_graphs_tested": 10,
+      "total_perturbations_evaluated": 150,
+      "avg_invariant_channels": 12.6,
+      "avg_fragile_channels": 1.0,
+      "min_edit_certificates_found": 10,
+      "min_edit_rate": 1.0,
+      "oracle_verification": {
+        "n_oracle_checks_performed": 10,
+        "n_certs_oracle_verified": 0,
+        "n_true_negatives_oracle_verified": 0,
+        "oracle_verified_rate": 0.0,
+        "oracle_note": "Stoer-Wagner exact min-cut used as oracle. oracle_verified=True means \u03a9's certificate cost equals the true min-cut."
+      },
+      "timing": {
+        "mean_ms": 41.92397219994746,
+        "max_ms": 50.42040100033773,
+        "total_s": 0.41923972199947457
+      },
+      "response_stats": {
+        "mean_response": 0.09981108271520209,
+        "max_response": 1.0,
+        "std_response": 0.24541674358807772
+      },
+      "per_graph_details": [
+        {
+          "graph_idx": 0,
+          "n_nodes": 21,
+          "n_edges": 21,
+          "time_ms": 41.388615999494505,
+          "invariant_channels": 13,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 3,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 1,
+          "n_nodes": 24,
+          "n_edges": 26,
+          "time_ms": 39.55572900031257,
+          "invariant_channels": 12,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 3,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 2,
+          "n_nodes": 29,
+          "n_edges": 29,
+          "time_ms": 50.264797999261646,
+          "invariant_channels": 13,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.1,
+          "min_edit_edges_removed": 8,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 3,
+          "n_nodes": 28,
+          "n_edges": 31,
+          "time_ms": 46.34163999980956,
+          "invariant_channels": 13,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.1,
+          "min_edit_edges_removed": 6,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 4,
+          "n_nodes": 23,
+          "n_edges": 23,
+          "time_ms": 44.65950700068788,
+          "invariant_channels": 14,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 2,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 5,
+          "n_nodes": 26,
+          "n_edges": 27,
+          "time_ms": 50.42040100033773,
+          "invariant_channels": 14,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.02,
+          "min_edit_edges_removed": 3,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 6,
+          "n_nodes": 13,
+          "n_edges": 13,
+          "time_ms": 28.704099999231403,
+          "invariant_channels": 11,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.15,
+          "min_edit_edges_removed": 3,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 7,
+          "n_nodes": 16,
+          "n_edges": 18,
+          "time_ms": 32.60086499994941,
+          "invariant_channels": 12,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.05,
+          "min_edit_edges_removed": 3,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 8,
+          "n_nodes": 26,
+          "n_edges": 27,
+          "time_ms": 45.96049700012372,
+          "invariant_channels": 13,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.1,
+          "min_edit_edges_removed": 5,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
+        },
+        {
+          "graph_idx": 9,
+          "n_nodes": 20,
+          "n_edges": 21,
+          "time_ms": 39.34356900026614,
+          "invariant_channels": 11,
+          "fragile_channels": 1,
+          "min_edit_found": true,
+          "min_edit_perturbation": "node_deletion",
+          "min_edit_scale": 0.1,
+          "min_edit_edges_removed": 4,
+          "oracle_min_cut_value": Infinity,
+          "oracle_verified": false,
+          "true_negative_verified": null
         }
       ]
     }

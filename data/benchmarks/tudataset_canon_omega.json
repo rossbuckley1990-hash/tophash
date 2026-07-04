@@ -1,0 +1,24 @@
+{
+  "MUTAG": {
+    "canon_engine": "pynauty",
+    "n_graphs_tested": 30,
+    "permutation_invariance_rate": 1.0,
+    "isomorphism_vs_nx": "12/12",
+    "uniqueness_rate": 0.8666666666666667,
+    "mean_canon_time_ms": 0.6820661333828564,
+    "omega_certs_found": "10/10",
+    "omega_oracle_verified": 0,
+    "omega_true_negatives_verified": 0
+  },
+  "PROTEINS": {
+    "canon_engine": "pynauty",
+    "n_graphs_tested": 30,
+    "permutation_invariance_rate": 1.0,
+    "isomorphism_vs_nx": "n/a (0 testable pairs)",
+    "uniqueness_rate": 1.0,
+    "mean_canon_time_ms": 1.0402168333712325,
+    "omega_certs_found": "9/10",
+    "omega_oracle_verified": 0,
+    "omega_true_negatives_verified": 1
+  }
+}

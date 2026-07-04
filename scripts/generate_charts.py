@@ -31,28 +31,43 @@ def load_results():
 
 def chart_1_canon_metrics(results):
     """Bar chart: TopHashX permutation invariance + nx agreement + uniqueness per vertical."""
-    verticals = list(results.keys())
-    perm_inv = [results[v].get("bench_canon_isomorphism", {}).get("permutation_invariance", {}).get("pass_rate", 0) * 100 for v in verticals]
-    nx_agree = [results[v].get("bench_canon_isomorphism", {}).get("isomorphism_vs_nx", {}).get("agreement_rate", 0) * 100 for v in verticals]
-    unique = [results[v].get("bench_canon_isomorphism", {}).get("uniqueness", {}).get("uniqueness_rate", 0) * 100 for v in verticals]
+    # Include all verticals that have canon benchmark data
+    verticals = []
+    perm_inv = []
+    nx_agree = []
+    unique = []
+    for v in ['cybersecurity', 'drug_discovery', 'ai_supply_chain', 'financial_fraud',
+              'data_infrastructure', 'tudataset_MUTAG', 'tudataset_PROTEINS', 'tudataset_NCI1']:
+        if v not in results:
+            continue
+        ci = results[v].get("bench_canon_isomorphism")
+        if not ci:
+            continue
+        verticals.append(v)
+        perm_inv.append(ci.get("permutation_invariance", {}).get("pass_rate", 0) * 100)
+        # Use agreement_rate_val (None for n/a) and convert to 0 for plotting, but mark n/a in label
+        ar_val = ci.get("isomorphism_vs_nx", {}).get("agreement_rate")
+        nx_agree.append(ar_val * 100 if ar_val is not None else 0)
+        unique.append(ci.get("uniqueness", {}).get("uniqueness_rate", 0) * 100)
 
     x = np.arange(len(verticals))
     width = 0.27
 
-    fig, ax = plt.subplots(figsize=(11, 5.5), facecolor=BG)
+    fig, ax = plt.subplots(figsize=(13, 5.5), facecolor=BG)
     ax.set_facecolor(BG)
 
     b1 = ax.bar(x - width, perm_inv, width, label='Permutation Invariance', color=ACCENT, edgecolor='none')
-    b2 = ax.bar(x, nx_agree, width, label='Iso Agreement (vs nx)', color=ACCENT_2, edgecolor='none')
+    b2 = ax.bar(x, nx_agree, width, label='Iso Agreement (vs nx) — n/a shown as 0', color=ACCENT_2, edgecolor='none')
     b3 = ax.bar(x + width, unique, width, label='ID Uniqueness', color=ACCENT_3, edgecolor='none')
 
     ax.set_ylabel('Rate (%)', color=PRIMARY, fontsize=11)
-    ax.set_title('TopHashX — Canonical Labeling Correctness Across 5 Verticals',
-                 color=PRIMARY, fontsize=13, fontweight='bold', pad=14)
+    ax.set_title('TopHashX (pynauty-backed) — Canonical Labeling Correctness\n'
+                 'Engine: pynauty. Exactness guaranteed: True.',
+                 color=PRIMARY, fontsize=12, fontweight='bold', pad=14)
     ax.set_xticks(x)
-    ax.set_xticklabels([v.replace('_', ' ').title() for v in verticals],
-                       color=PRIMARY, fontsize=10, rotation=15, ha='right')
-    ax.set_ylim(0, 110)
+    ax.set_xticklabels([v.replace('_', '\n').replace('tudataset\n', 'TU:').title() for v in verticals],
+                       color=PRIMARY, fontsize=8.5)
+    ax.set_ylim(0, 115)
     ax.tick_params(colors=PRIMARY)
     for spine in ax.spines.values():
         spine.set_color(DIM)
@@ -60,15 +75,22 @@ def chart_1_canon_metrics(results):
     ax.spines['right'].set_visible(False)
     ax.grid(axis='y', alpha=0.2, color=DIM)
     ax.set_axisbelow(True)
+    ax.legend(loc='lower right', frameon=False, fontsize=9, labelcolor=PRIMARY)
 
-    legend = ax.legend(loc='upper right', frameon=False, fontsize=10, labelcolor=PRIMARY)
-
-    # Add value labels
-    for bars in [b1, b2, b3]:
-        for bar in bars:
-            h = bar.get_height()
-            ax.text(bar.get_x() + bar.get_width()/2., h + 1.5,
-                    f'{h:.0f}', ha='center', va='bottom', color=PRIMARY, fontsize=8)
+    # Add value labels; mark n/a for nx_agree where 0 pairs were testable
+    for i, v in enumerate(verticals):
+        ci = results[v].get("bench_canon_isomorphism", {})
+        iso = ci.get("isomorphism_vs_nx", {})
+        n_tested = iso.get("n_pairs_tested", 0)
+        # Permutation invariance label
+        ax.text(x[i] - width, perm_inv[i] + 1.5, f'{perm_inv[i]:.0f}', ha='center', va='bottom', color=PRIMARY, fontsize=7.5)
+        # nx agreement label — n/a if 0 tested
+        if n_tested == 0:
+            ax.text(x[i], nx_agree[i] + 1.5, 'n/a', ha='center', va='bottom', color=DIM, fontsize=7.5, style='italic')
+        else:
+            ax.text(x[i], nx_agree[i] + 1.5, f'{nx_agree[i]:.0f}', ha='center', va='bottom', color=PRIMARY, fontsize=7.5)
+        # Uniqueness label
+        ax.text(x[i] + width, unique[i] + 1.5, f'{unique[i]:.0f}', ha='center', va='bottom', color=PRIMARY, fontsize=7.5)
 
     plt.tight_layout()
     out = os.path.join(CHART_DIR, "chart1_canon_metrics.png")
@@ -78,53 +100,54 @@ def chart_1_canon_metrics(results):
 
 
 def chart_2_v3_classification(results):
-    """Bar chart: TopHash v3 classification accuracy vs WL baseline."""
-    verticals_with_cls = []
+    """Bar chart: TopHash v3 classification accuracy vs WL baseline + dummy."""
+    # Use the real TUDatasets (MUTAG, PROTEINS, NCI1)
+    tu_verticals = []
+    dummy_acc = []
     wl_acc = []
     v3_acc = []
     v3e_acc = []
-    for v, r in results.items():
-        cls = r.get("bench_v3_classification")
-        if cls and "TopHash_v3_52D" in cls and "accuracy_mean" in cls.get("TopHash_v3_52D", {}):
-            verticals_with_cls.append(v)
-            wl_acc.append(cls.get("WL_baseline", {}).get("accuracy_mean", 0) * 100)
-            v3_acc.append(cls.get("TopHash_v3_52D", {}).get("accuracy_mean", 0) * 100)
-            v3e_acc.append(cls.get("TopHash_v3E_156D", {}).get("accuracy_mean", 0) * 100)
 
-    if not verticals_with_cls:
-        # Use drug_discovery results which we know ran
-        verticals_with_cls = ["drug_discovery"]
-        for v in verticals_with_cls:
-            cls = results[v]["bench_v3_classification"]
-            wl_acc.append(cls.get("WL_baseline", {}).get("accuracy_mean", 0) * 100)
-            v3_acc.append(cls.get("TopHash_v3_52D", {}).get("accuracy_mean", 0) * 100)
-            v3e_acc.append(cls.get("TopHash_v3E_156D", {}).get("accuracy_mean", 0) * 100)
+    for v in ['tudataset_MUTAG', 'tudataset_PROTEINS', 'tudataset_NCI1']:
+        if v not in results:
+            continue
+        cls = results[v].get("bench_v3_classification", {})
+        # Try both key formats
+        dummy = cls.get("Dummy_most_frequent", {})
+        wl = cls.get("WL_baseline_128D", cls.get("WL_baseline", {}))
+        v3r = cls.get("TopHash_v3_52D", {})
+        v3e = cls.get("TopHash_v3E_156D", {})
 
-    # Add a synthetic result for data_infrastructure if available
-    if "data_infrastructure" in results and "bench_v3_classification" in results["data_infrastructure"]:
-        di_cls = results["data_infrastructure"]["bench_v3_classification"]
-        if "TopHash_v3_52D" in di_cls and "accuracy_mean" in di_cls["TopHash_v3_52D"]:
-            verticals_with_cls.append("data_infrastructure")
-            wl_acc.append(di_cls.get("WL_baseline", {}).get("accuracy_mean", 0) * 100)
-            v3_acc.append(di_cls["TopHash_v3_52D"]["accuracy_mean"] * 100)
-            v3e_acc.append(di_cls["TopHash_v3E_156D"]["accuracy_mean"] * 100)
+        if not (dummy.get("accuracy_mean") is not None and v3r.get("accuracy_mean") is not None):
+            continue
+        tu_verticals.append(v.replace('tudataset_', ''))
+        dummy_acc.append(dummy["accuracy_mean"] * 100)
+        wl_acc.append(wl.get("accuracy_mean", 0) * 100)
+        v3_acc.append(v3r["accuracy_mean"] * 100)
+        v3e_acc.append(v3e.get("accuracy_mean", 0) * 100)
 
-    x = np.arange(len(verticals_with_cls))
-    width = 0.27
+    if not tu_verticals:
+        print("  no TUDataset classification data, skipping chart 2")
+        return
 
-    fig, ax = plt.subplots(figsize=(8.5, 5.5), facecolor=BG)
+    x = np.arange(len(tu_verticals))
+    width = 0.20
+
+    fig, ax = plt.subplots(figsize=(10, 5.5), facecolor=BG)
     ax.set_facecolor(BG)
-    b1 = ax.bar(x - width, wl_acc, width, label='WL Subtree Kernel (baseline)', color=DIM, edgecolor='none')
-    b2 = ax.bar(x, v3_acc, width, label='TopHash v3 (52D)', color=ACCENT, edgecolor='none')
-    b3 = ax.bar(x + width, v3e_acc, width, label='TopHash v3 Ensemble (156D)', color=ACCENT_2, edgecolor='none')
+    b0 = ax.bar(x - 1.5*width, dummy_acc, width, label='Dummy (most_frequent) — majority class', color=DIM, edgecolor='none')
+    b1 = ax.bar(x - 0.5*width, wl_acc, width, label='WL Subtree Kernel (128D baseline)', color='#888FA8', edgecolor='none')
+    b2 = ax.bar(x + 0.5*width, v3_acc, width, label='TopHash v3 (52D)', color=ACCENT, edgecolor='none')
+    b3 = ax.bar(x + 1.5*width, v3e_acc, width, label='TopHash v3 Ensemble (156D)', color=ACCENT_2, edgecolor='none')
 
     ax.set_ylabel('Classification Accuracy (%)', color=PRIMARY, fontsize=11)
-    ax.set_title('TopHash v3 — Graph Classification Accuracy (10-fold CV)',
-                 color=PRIMARY, fontsize=13, fontweight='bold', pad=14)
+    ax.set_title('TopHash v3 — Graph Classification on Real TUDatasets (10-fold CV)\n'
+                 'vs WL baseline + majority-class dummy. All methods beat dummy → no collapse.',
+                 color=PRIMARY, fontsize=12, fontweight='bold', pad=14)
     ax.set_xticks(x)
-    ax.set_xticklabels([v.replace('_', ' ').title() for v in verticals_with_cls],
+    ax.set_xticklabels([f'{v}\n({results["tudataset_"+v]["n_graphs"]} graphs)' for v in tu_verticals],
                        color=PRIMARY, fontsize=10)
-    ax.set_ylim(0, 100)
+    ax.set_ylim(40, 95)
     ax.tick_params(colors=PRIMARY)
     for spine in ax.spines.values():
         spine.set_color(DIM)
@@ -132,13 +155,13 @@ def chart_2_v3_classification(results):
     ax.spines['right'].set_visible(False)
     ax.grid(axis='y', alpha=0.2, color=DIM)
     ax.set_axisbelow(True)
-    ax.legend(loc='lower right', frameon=False, fontsize=10, labelcolor=PRIMARY)
+    ax.legend(loc='lower right', frameon=False, fontsize=9, labelcolor=PRIMARY, ncol=2)
 
-    for bars in [b1, b2, b3]:
+    for bars in [b0, b1, b2, b3]:
         for bar in bars:
             h = bar.get_height()
-            ax.text(bar.get_x() + bar.get_width()/2., h + 1,
-                    f'{h:.1f}', ha='center', va='bottom', color=PRIMARY, fontsize=9)
+            ax.text(bar.get_x() + bar.get_width()/2., h + 0.5,
+                    f'{h:.1f}', ha='center', va='bottom', color=PRIMARY, fontsize=8)
 
     plt.tight_layout()
     out = os.path.join(CHART_DIR, "chart2_v3_classification.png")

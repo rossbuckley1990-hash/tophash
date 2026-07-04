@@ -42,6 +42,14 @@ def wl_subtree_features(G: nx.Graph, n_iter: int = 3) -> np.ndarray:
     # Initial color: degree
     colors = {n: G.degree(n) for n in G.nodes()}
 
+    # Use a stable hash for WL refinement (avoid Python's salted hash() —
+    # even though numeric tuples happen to be stable, we use hashlib for
+    # explicitness and to match TopHash's determinism invariant).
+    import hashlib
+    def _stable_wl_hash(color: int, neighbor_colors: tuple) -> int:
+        key = f"{color}|{neighbor_colors}".encode("utf-8")
+        return int.from_bytes(hashlib.sha256(key).digest()[:4], "big")
+
     # Collect histograms at each iteration
     histograms = []
     for it in range(n_iter + 1):
@@ -58,7 +66,7 @@ def wl_subtree_features(G: nx.Graph, n_iter: int = 3) -> np.ndarray:
         new_colors = {}
         for n in G.nodes():
             nbr_colors = tuple(sorted(colors[nb] for nb in G.neighbors(n)))
-            new_colors[n] = hash((colors[n], nbr_colors)) % (2**31)
+            new_colors[n] = _stable_wl_hash(colors[n], nbr_colors)
         colors = new_colors
 
     # Build a feature vector: concat histograms (with dimension cap for tractability)
@@ -84,6 +92,13 @@ def bench_v3_classification(vertical: str, data: List[Tuple[nx.Graph, str]]):
     """
     Test TopHash v3 + SVM vs WL baseline + SVM on graph classification.
     Reports 10-fold CV accuracy for both, plus TopHash v3 Ensemble.
+
+    Critical integrity check: also reports a DummyClassifier(most_frequent)
+    baseline. If the dummy matches the TopHash/WL accuracy, the classifiers
+    are collapsing to the majority class — meaning the benchmark is measuring
+    nothing. This check exists because three different feature spaces
+    producing identical fold-by-fold accuracy is the classic signature of
+    majority-class collapse under class imbalance.
     """
     print(f"\n--- Benchmark 1: TopHash v3 classification on [{vertical}] ---")
 
@@ -101,10 +116,19 @@ def bench_v3_classification(vertical: str, data: List[Tuple[nx.Graph, str]]):
         print(f"  Skipping — only {len(filtered)} samples")
         return None
 
+    # Report class balance and majority-class baseline accuracy explicitly
+    majority_label = max(label_counts.items(), key=lambda x: x[1])[0]
+    majority_count = label_counts[majority_label]
+    majority_pct = majority_count / len(filtered)
+
     print(f"  {len(filtered)} graphs, {len(valid_labels)} classes: {dict(label_counts)}")
+    print(f"  Majority class: '{majority_label}' = {majority_count}/{len(filtered)} "
+          f"({majority_pct*100:.1f}%)")
+    print(f"  → DummyClassifier(most_frequent) would score {majority_pct*100:.1f}%")
 
     # Compute features
     from sklearn.svm import SVC
+    from sklearn.dummy import DummyClassifier
     from sklearn.preprocessing import StandardScaler
     from sklearn.model_selection import cross_val_score, StratifiedKFold
     from sklearn.pipeline import Pipeline
@@ -126,8 +150,39 @@ def bench_v3_classification(vertical: str, data: List[Tuple[nx.Graph, str]]):
 
     labels = np.array([l for _, l in filtered])
 
-    # Classification
-    results = {}
+    # Classification — add DummyClassifier(most_frequent) as the integrity check
+    results = {
+        "class_balance": {
+            "n_samples": int(len(filtered)),
+            "n_classes": int(len(valid_labels)),
+            "label_counts": {str(k): int(v) for k, v in label_counts.items()},
+            "majority_label": str(majority_label),
+            "majority_pct": float(majority_pct),
+        },
+    }
+
+    # Dummy baseline (no features needed — just predicts majority class)
+    try:
+        cv = StratifiedKFold(n_splits=min(10, len(filtered) // 2),
+                             shuffle=True, random_state=42)
+        dummy = DummyClassifier(strategy='most_frequent', random_state=42)
+        # Use a dummy zero-feature matrix
+        dummy_scores = cross_val_score(dummy, np.zeros((len(filtered), 1)), labels,
+                                        cv=cv, scoring='accuracy')
+        results["Dummy_most_frequent"] = {
+            "accuracy_mean": float(dummy_scores.mean()),
+            "accuracy_std": float(dummy_scores.std()),
+            "feature_dim": 0,
+            "feature_time_total_s": 0.0,
+            "feature_time_per_graph_ms": 0.0,
+            "n_samples": int(len(filtered)),
+            "interpretation": "Predicts majority class. If TopHash acc ≈ this, the benchmark is measuring nothing.",
+        }
+        print(f"  {'Dummy_most_frequent':25s} dim=   0  acc={dummy_scores.mean():.3f}±{dummy_scores.std():.3f}  "
+              f"(majority-class baseline)")
+    except Exception as e:
+        print(f"  Dummy_most_frequent: FAILED - {e}")
+
     for name, feats, t_feat in [("WL_baseline", feats_wl, t_wl),
                                  ("TopHash_v3_52D", feats_v3, t_v3),
                                  ("TopHash_v3E_156D", feats_v3e, t_v3e)]:
@@ -146,9 +201,11 @@ def bench_v3_classification(vertical: str, data: List[Tuple[nx.Graph, str]]):
                 "feature_time_total_s": float(t_feat),
                 "feature_time_per_graph_ms": float(t_feat / len(filtered) * 1000),
                 "n_samples": int(len(filtered)),
+                "beats_dummy_by": float(scores.mean() - results["Dummy_most_frequent"]["accuracy_mean"]),
             }
             print(f"  {name:25s} dim={feats.shape[1]:4d}  acc={scores.mean():.3f}±{scores.std():.3f}  "
-                  f"({t_feat/len(filtered)*1000:.1f}ms/graph)")
+                  f"({t_feat/len(filtered)*1000:.1f}ms/graph)  "
+                  f"Δdummy={results[name]['beats_dummy_by']:+.3f}")
         except Exception as e:
             print(f"  {name}: FAILED - {e}")
             results[name] = {"error": str(e)}
@@ -222,8 +279,14 @@ def bench_canon_isomorphism(vertical: str, data: List[Any]):
     perm_invariance_rate = perm_pass / max(perm_total, 1)
 
     # Test 2b: Isomorphism detection vs networkx
+    # NOTE: We only test pairs where both graphs have the same number of nodes
+    # AND edges (otherwise networkx trivially returns False and we'd be testing
+    # nothing). If no such pairs exist in the test set, we report "n/a" rather
+    # than 0.0% — the latter would be misread as "complete failure" by a
+    # skimming reader.
     print("  [2b] Isomorphism detection vs networkx...")
-    n_pairs_tested = 0
+    n_pairs_testable = 0  # pairs with same n_nodes AND n_edges
+    n_pairs_tested = 0    # testable pairs where both TopHashX and nx completed
     n_pairs_agree = 0
     n_pairs_both_iso = 0
     n_pairs_both_noniso = 0
@@ -237,15 +300,17 @@ def bench_canon_isomorphism(vertical: str, data: List[Any]):
     for i in range(len(test_subset)):
         for j in range(i + 1, len(test_subset)):
             g1, g2 = test_subset[i], test_subset[j]
+            # Pre-filter: only test pairs where isomorphism is plausible
             if g1.number_of_nodes() != g2.number_of_nodes():
                 continue
             if g1.number_of_edges() != g2.number_of_edges():
                 continue
+            n_pairs_testable += 1
             try:
                 # TopHashX
-                id1 = canon.tophashx(g1, include_certificate=False)['canonical_id']
-                id2 = canon.tophashx(g2, include_certificate=False)['canonical_id']
-                tophash_iso = (id1 == id2)
+                r1 = canon.tophashx(g1, include_certificate=False)
+                r2 = canon.tophashx(g2, include_certificate=False)
+                tophash_iso = (r1['canonical_id'] == r2['canonical_id'])
 
                 # networkx
                 nx_iso = nx.is_isomorphic(g1, g2)
@@ -262,6 +327,14 @@ def bench_canon_isomorphism(vertical: str, data: List[Any]):
             except Exception as e:
                 continue
 
+    # Track which canon engine was used
+    engine_used = "unknown"
+    try:
+        sample_result = canon.tophashx(test_graphs[0], include_certificate=False)
+        engine_used = sample_result.get("canon_engine", "unknown")
+    except Exception:
+        pass
+
     # Test 2c: Uniqueness — distinct graphs should have distinct IDs
     print("  [2c] Uniqueness test (distinct graphs → distinct IDs)...")
     ids = []
@@ -275,20 +348,33 @@ def bench_canon_isomorphism(vertical: str, data: List[Any]):
     total_ids = len(ids)
     uniqueness_rate = unique_ids / max(total_ids, 1)
 
+    # Compute agreement rate carefully — distinguish "0 tested" from "0% agreement"
+    if n_pairs_tested == 0:
+        agreement_rate_str = "n/a"
+        agreement_rate_val = None
+    else:
+        agreement_rate_str = f"{n_pairs_agree/n_pairs_tested*100:.1f}%"
+        agreement_rate_val = float(n_pairs_agree / n_pairs_tested)
+
     results = {
         "n_graphs_tested": int(len(test_graphs)),
+        "canon_engine": engine_used,
+        "exactness_guaranteed": (engine_used == "pynauty"),
         "permutation_invariance": {
             "n_tested": int(perm_total),
             "n_passed": int(perm_pass),
             "pass_rate": float(perm_invariance_rate),
         },
         "isomorphism_vs_nx": {
+            "n_pairs_testable": int(n_pairs_testable),
             "n_pairs_tested": int(n_pairs_tested),
             "n_agree": int(n_pairs_agree),
-            "agreement_rate": float(n_pairs_agree / max(n_pairs_tested, 1)),
+            "agreement_rate": agreement_rate_val,  # None if no pairs tested
+            "agreement_rate_str": agreement_rate_str,  # "n/a (0 pairs)" or "100.0%"
             "n_both_iso": int(n_pairs_both_iso),
             "n_both_noniso": int(n_pairs_both_noniso),
             "n_disagreements": int(n_disagreements),
+            "note": "n/a means 0 testable pairs (graphs had different node/edge counts)" if n_pairs_tested == 0 else None,
         },
         "uniqueness": {
             "n_ids": int(total_ids),
@@ -303,9 +389,10 @@ def bench_canon_isomorphism(vertical: str, data: List[Any]):
         },
     }
 
+    print(f"  Canon engine: {engine_used} (exactness_guaranteed={results['exactness_guaranteed']})")
     print(f"  Permutation invariance: {perm_pass}/{perm_total} = {perm_invariance_rate:.1%}")
-    print(f"  Isomorphism agreement with nx: {n_pairs_agree}/{n_pairs_tested} = "
-          f"{n_pairs_agree/max(n_pairs_tested,1):.1%}")
+    print(f"  Isomorphism agreement with nx: {n_pairs_agree}/{n_pairs_tested} = {agreement_rate_str}"
+          f" ({n_pairs_testable} testable pairs)")
     print(f"  Uniqueness: {unique_ids}/{total_ids} = {uniqueness_rate:.1%}")
     print(f"  Timing: mean {np.mean(times_id)*1000:.1f}ms, max {np.max(times_id)*1000:.1f}ms")
 
@@ -339,6 +426,9 @@ def bench_omega_counterfactual(vertical: str, data: List[Any]):
     total_invariant_channels = 0
     total_fragile_channels = 0
     total_certs_found = 0
+    total_oracle_verified = 0  # Ω cert matches Stoer-Wagner min-cut
+    total_true_negatives_verified = 0  # No-cert cases where oracle confirms min-cut > budget
+    total_oracle_checks = 0  # Total cases where oracle verification was performed
     response_magnitudes = []
 
     for i, g in enumerate(test_graphs):
@@ -355,8 +445,21 @@ def bench_omega_counterfactual(vertical: str, data: List[Any]):
             total_perturbations += 15  # 5 perturbations × 3 scales
             total_invariant_channels += len(result['invariant_core'])
             total_fragile_channels += len(result['fragility_shell'])
-            if result['minimal_edit_certificate'].get('found'):
+
+            cert = result['minimal_edit_certificate']
+            cert_found = cert.get('found', False)
+            oracle_min_cut = cert.get('oracle_min_cut_value')
+            oracle_verified = cert.get('oracle_verified')
+            true_neg_verified = cert.get('true_negative_verified')
+
+            if cert_found:
                 total_certs_found += 1
+            if oracle_verified is not None:
+                total_oracle_checks += 1
+                if oracle_verified:
+                    total_oracle_verified += 1
+            if true_neg_verified:
+                total_true_negatives_verified += 1
 
             # Collect response magnitudes
             for k, v in result['channel_scores'].items():
@@ -369,9 +472,13 @@ def bench_omega_counterfactual(vertical: str, data: List[Any]):
                 "time_ms": float((t1 - t0) * 1000),
                 "invariant_channels": int(len(result['invariant_core'])),
                 "fragile_channels": int(len(result['fragility_shell'])),
-                "min_edit_found": bool(result['minimal_edit_certificate'].get('found')),
-                "min_edit_perturbation": result['minimal_edit_certificate'].get('perturbation', None),
-                "min_edit_scale": result['minimal_edit_certificate'].get('scale', None),
+                "min_edit_found": bool(cert_found),
+                "min_edit_perturbation": cert.get('perturbation', None),
+                "min_edit_scale": cert.get('scale', None),
+                "min_edit_edges_removed": cert.get('edges_removed', None),
+                "oracle_min_cut_value": oracle_min_cut,
+                "oracle_verified": oracle_verified,  # True = Ω cert matches Stoer-Wagner
+                "true_negative_verified": true_neg_verified,
             })
         except Exception as e:
             print(f"  graph {i}: FAILED - {e}")
@@ -387,6 +494,13 @@ def bench_omega_counterfactual(vertical: str, data: List[Any]):
         "avg_fragile_channels": float(np.mean([r['fragile_channels'] for r in all_results])),
         "min_edit_certificates_found": int(total_certs_found),
         "min_edit_rate": float(total_certs_found / max(len(all_results), 1)),
+        "oracle_verification": {
+            "n_oracle_checks_performed": int(total_oracle_checks),
+            "n_certs_oracle_verified": int(total_oracle_verified),
+            "n_true_negatives_oracle_verified": int(total_true_negatives_verified),
+            "oracle_verified_rate": float(total_oracle_verified / max(total_certs_found, 1)),
+            "oracle_note": "Stoer-Wagner exact min-cut used as oracle. oracle_verified=True means Ω's certificate cost equals the true min-cut.",
+        },
         "timing": {
             "mean_ms": float(np.mean([r['time_ms'] for r in all_results])),
             "max_ms": float(np.max([r['time_ms'] for r in all_results])),
@@ -404,6 +518,8 @@ def bench_omega_counterfactual(vertical: str, data: List[Any]):
     print(f"  Avg invariant channels/graph: {results['avg_invariant_channels']:.1f}")
     print(f"  Avg fragile channels/graph: {results['avg_fragile_channels']:.1f}")
     print(f"  Minimal-edit certs found: {total_certs_found}/{len(all_results)}")
+    print(f"  Oracle-verified certs: {total_oracle_verified}/{total_certs_found} "
+          f"(+{total_true_negatives_verified} true negatives verified)")
     print(f"  Mean time: {results['timing']['mean_ms']:.1f}ms/graph")
 
     return results
@@ -413,13 +529,26 @@ def bench_omega_counterfactual(vertical: str, data: List[Any]):
 # Top-level benchmark runner
 # ============================================================
 def run_full_benchmark():
-    """Run all benchmarks on all 5 verticals."""
+    """Run all benchmarks on all 5 verticals + real TUDatasets."""
     print("=" * 70)
     print("TopHash Full Benchmark Suite")
     print("=" * 70)
 
-    # Fetch datasets
+    # Fetch the 5-vertical datasets
     datasets = fetch_all()
+
+    # Also fetch the real TUDatasets (MUTAG, PROTEINS, NCI1)
+    # These replace the synthetic drug-discovery smoke test with the canonical
+    # graph-classification benchmarks used in the WL kernel literature.
+    try:
+        from scripts.fetch_tudataset import fetch_all_tu
+        tu_datasets = fetch_all_tu()
+        # Add TUDatasets as separate verticals
+        for name, data in tu_datasets.items():
+            datasets[f"tudataset_{name}"] = data
+    except Exception as e:
+        print(f"\n[WARNING] Could not fetch TUDatasets: {e}")
+        print("Falling back to synthetic drug_discovery only.")
 
     # Run benchmarks per vertical
     all_results = {}
@@ -487,19 +616,27 @@ if __name__ == "__main__":
         if "bench_v3_classification" in vres and vres["bench_v3_classification"]:
             print("  TopHash v3 classification:")
             for method, info in vres["bench_v3_classification"].items():
-                if "accuracy_mean" in info:
+                if isinstance(info, dict) and "accuracy_mean" in info:
+                    dummy_delta = info.get('beats_dummy_by', 0.0)
                     print(f"    {method:25s}: acc={info['accuracy_mean']:.3f}±{info['accuracy_std']:.3f}  "
-                          f"dim={info['feature_dim']}  {info['feature_time_per_graph_ms']:.1f}ms/graph")
+                          f"dim={info['feature_dim']}  "
+                          f"Δdummy={dummy_delta:+.3f}  "
+                          f"{info['feature_time_per_graph_ms']:.1f}ms/graph")
         if "bench_canon_isomorphism" in vres and vres["bench_canon_isomorphism"]:
             ci = vres["bench_canon_isomorphism"]
-            print(f"  TopHashX: perm_invariance={ci['permutation_invariance']['pass_rate']:.1%}, "
-                  f"nx_agreement={ci['isomorphism_vs_nx']['agreement_rate']:.1%}, "
+            nx_str = ci['isomorphism_vs_nx']['agreement_rate_str']
+            print(f"  TopHashX: engine={ci.get('canon_engine','?')}, "
+                  f"perm_invariance={ci['permutation_invariance']['pass_rate']:.1%}, "
+                  f"nx_agreement={nx_str}, "
                   f"uniqueness={ci['uniqueness']['uniqueness_rate']:.1%}, "
                   f"mean={ci['timing']['mean_id_time_ms']:.1f}ms")
         if "bench_omega_counterfactual" in vres and vres["bench_omega_counterfactual"]:
             oc = vres["bench_omega_counterfactual"]
+            oracle = oc.get('oracle_verification', {})
             print(f"  TopHash Ω∞: {oc['total_perturbations_evaluated']} perturbations, "
                   f"avg {oc['avg_invariant_channels']:.1f} invariant + "
                   f"{oc['avg_fragile_channels']:.1f} fragile channels, "
                   f"min-edit rate {oc['min_edit_rate']:.1%}, "
+                  f"oracle-verified {oracle.get('n_certs_oracle_verified',0)}/"
+                  f"{oc['min_edit_certificates_found']}, "
                   f"mean {oc['timing']['mean_ms']:.1f}ms")

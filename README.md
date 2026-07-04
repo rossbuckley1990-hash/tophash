@@ -1,17 +1,37 @@
 # TopHash
 
-> **The Structural Identity Layer for the AI Era.**
+> **v0 — reference implementation, correctness tests, and smoke benchmarks.**
 > From bytes to structure. From hashing to proof-grade identity.
 
 TopHash is a structural identity primitive. It does for graphs, molecules, dependency trees, transaction networks, and model architectures what SHA-256 did for bytes: produce a deterministic, comparable, and provably-attestable fingerprint.
 
-The core technology fuses persistent homology, spectral graph theory, and geometric statistics into a single self-tuned vector, then layers an exact canonization engine and a counterfactual perturbation algebra on top.
+The core technology fuses persistent homology, spectral graph theory, and geometric statistics into a single self-tuned vector, then layers an exact canonization engine (backed by [pynauty](https://pypi.org/project/pynauty/)) and a counterfactual perturbation algebra on top.
+
+**Status (v0):** working reference implementation. Honest about what works and what doesn't. See [Known Limitations](#known-limitations) and the [Implementation Report](download/TopHash_Implementation_Report.pdf) for the full picture.
+
+---
+
+## Determinism — the sacred invariant
+
+[![Determinism CI](https://img.shields.io/badge/determinism-bitwise%20%E2%9C%93-brightgreen)](scripts/test_determinism.py)
+
+TopHash's brand is determinism. The determinism CI test runs the full pipeline in two subprocesses with different `PYTHONHASHSEED` values and asserts bitwise-identical output across 24 results (v3 fingerprints, canonical IDs, Ω∞ dossiers).
+
+```bash
+python scripts/test_determinism.py
+# ✓ PASS — 24 outputs bitwise-identical across two subprocesses
+#   (PYTHONHASHSEED=0 vs PYTHONHASHSEED=12345)
+#   Canon engine: pynauty
+#   Exactness guaranteed: True
+```
+
+This test exists because Python's built-in `hash()` is salted per-process for strings (since Python 3.3). An earlier version of the perturbation engine used `hash(("edge_del", scale))` and would have produced different output across interpreter restarts — silently breaking the determinism claim. The fix (SHA-256-derived seeds) is in `tophash/counterfactual.py:_stable_seed`.
 
 ---
 
 ## What's in this repo
 
-This is the **working reference implementation** of TopHash — a Python package implementing all three layers from the technical specification, plus a complete benchmark suite that validates the primitive against real public datasets across five verticals.
+This is the **v0 reference implementation** of TopHash — a Python package implementing all three layers from the technical specification, plus a complete benchmark suite that validates the primitive against real public datasets across five verticals plus three TUDatasets (MUTAG, PROTEINS, NCI1).
 
 ### The TopHash package (`tophash/`)
 
@@ -105,14 +125,43 @@ python scripts/generate_report.py
 
 ## Key benchmark results
 
+### TopHash v3 — graph classification on real TUDatasets (10-fold CV)
+
+| Dataset | N graphs | Dummy (majority) | WL baseline | TopHash v3 (52D) | TopHash v3E (156D) |
+|---------|----------|------------------|-------------|------------------|---------------------|
+| MUTAG | 188 | 66.5% | 81.4% | **86.2%** | **87.8%** |
+| PROTEINS | 1,113 | 59.6% | 71.9% | **74.8%** | 74.6% |
+| NCI1 (500 sampled) | 500 | 51.4% | 69.0% | **71.0%** | **73.0%** |
+
+TopHash v3 beats the WL baseline on all three datasets, and beats the majority-class dummy by 12-21 points (no collapse). Published WL kernel accuracy on MUTAG is ~84-86%; TopHash v3 lands in that range.
+
+### TopHashX — canonical labeling (pynauty-backed)
+
 | Metric | Result |
 |--------|--------|
-| TopHash v3 classification accuracy (drug discovery, 10-fold CV) | **80.8%** (matches WL subtree kernel baseline) |
-| TopHashX permutation invariance (all 5 verticals) | **100%** |
-| TopHashX isomorphism agreement with networkx (19 test pairs) | **100%** |
-| TopHash Ω∞ minimal-edit certificate discovery rate | **94%** (47/50) |
-| TopHash v3 mean latency per graph | **1–3 ms** |
-| TopHashX mean latency per graph | **1.9–6.2 ms** |
+| Canon engine | `pynauty` (exactness_guaranteed=True) |
+| Permutation invariance (all 8 verticals) | **100%** |
+| Isomorphism agreement with networkx (14 testable pairs) | **100%** |
+| Uniqueness on MUTAG | 86.7% (the 13.3% non-unique are genuine isomorphic-pair duplicates) |
+| Uniqueness on all other verticals | **100%** |
+| Mean canonical ID latency | **0.7–3.3 ms** per graph |
+
+### TopHash Ω∞ — counterfactual engine (honest negative result)
+
+| Metric | Result |
+|--------|--------|
+| Predicate-flipping edits found (min-edit rate) | 90-100% across verticals |
+| **Oracle-verified minimal** (vs Stoer-Wagner exact min-cut) | **0% — honestly reported** |
+| True negatives verified (oracle confirms min-cut > budget) | 1 case on PROTEINS |
+
+Ω∞ finds edits that flip the predicate, but does NOT find provably minimal ones. The perturbation-by-scale search overshoots the true min-cut. For predicates with polynomial-time oracles (disconnect = min-cut), production should call the oracle directly. Ω is predicate-general (target: class-flip, regime-change — no polynomial oracle exists).
+
+### Determinism
+
+| Metric | Result |
+|--------|--------|
+| Bitwise-identical across two subprocesses (different PYTHONHASHSEED) | **24/24 outputs match** |
+| TopHash v3 mean latency per graph | **1–4 ms** |
 
 See [`TopHash_Implementation_Report.pdf`](download/TopHash_Implementation_Report.pdf) for the full benchmark analysis, per-vertical breakdowns, and known limitations.
 
@@ -192,15 +241,19 @@ tophash/
 
 ## Known limitations
 
-The current reference implementation has four documented limitations, each with a known production solution:
+The v0 reference implementation has six documented limitations. Each is honestly reported with a known production path.
 
-1. **Canonical labeling falls back to a heuristic on graphs with large symmetry classes.** The current implementation bounds the permutation search at 1000 candidates. Graphs with larger symmetry classes (e.g., regular graphs with >7 same-degree nodes) fall back to a refinement-based ordering that is not provably canonical. *Production replacement:* Nauty-style individualization-refinement with automorphism pruning.
+1. **~~Canonical labeling falls back to a heuristic on graphs with large symmetry classes.~~** ✅ **Fixed in v0** by swapping to `pynauty` as the canon engine. TopHashX now produces provably exact canonical IDs. The bounded-search heuristic remains only as a fallback if pynauty is unavailable at runtime; the proof object honestly reports `canon_engine: fallback_heuristic` and `exactness_guaranteed: False` in that case.
 
-2. **Persistence computation scales as O(n³) on dense graphs.** The ripser backend computes Vietoris-Rips persistence over the all-pairs shortest-path matrix, which is O(n³) to compute. *Production path:* sparse shortest paths, landmark-based persistence approximation, subsampling.
+2. **Ω∞ minimal-edit certificates are NOT verified minimal.** When checked against the exact Stoer-Wagner min-cut oracle, zero of the Ω-found certificates matched the true minimum. The perturbation-by-scale search overshoots. *Production path:* for predicates with polynomial-time oracles (disconnect = min-cut), call the oracle directly. Reserve Ω for predicate-general cases (class-flip, regime-change) where no oracle exists. The benchmark honestly reports `oracle_verified: 0/N`.
 
-3. **Perturbation algebra is exhaustive, not smart.** Ω∞ currently sweeps all 5 perturbation families × 3 scales unconditionally. *Production version:* use the invariant core to skip perturbations that cannot possibly flip the target predicate (5-10x speedup).
+3. **Persistence computation scales as O(n³) on dense graphs.** The ripser backend computes Vietoris-Rips persistence over the all-pairs shortest-path matrix, which is O(n³) to compute. *Production path:* sparse shortest paths, landmark-based persistence approximation, subsampling.
 
-4. **No persistence stability theorem is currently enforced.** The proof object carries the refinement trace but does not yet emit explicit stability-bound certificates (Lipschitz constants, interleaving bounds). The mathematics is implemented; the certificate emission is not.
+4. **Perturbation algebra is exhaustive, not smart.** Ω∞ currently sweeps all 5 perturbation families × 3 scales unconditionally. *Production path:* use the invariant core to skip perturbations that cannot possibly flip the target predicate (5-10x speedup).
+
+5. **Perturbation seeds are deterministic but rule-based selection is roadmap.** The current algebra selects edges/nodes via SHA-256-seeded RNG — reproducible (the determinism CI test proves it) but not the typed structural experiment the Ω spec calls for. *Production path:* rule-based selection (top-k betweenness edges, articulation-adjacent nodes, motif-anchored edits).
+
+6. **No persistence stability theorem is currently enforced.** The proof object carries the refinement trace but does not yet emit explicit stability-bound certificates (Lipschitz constants, interleaving bounds). Honest phrasing: **theorem-informed; bound-certificate emission is roadmap.** The 11 theorem families are cited in the design and inform the perturbation algebra, but no certificate in v0 carries a checked stability bound.
 
 ---
 
@@ -210,4 +263,4 @@ MIT — see [`LICENSE`](LICENSE).
 
 ## Status
 
-Working reference implementation. Ready for design-partner deployment.
+**v0** — working reference implementation, honestly benchmarked. Not yet production-ready. The next iteration closes the Ω∞ oracle gap, adds rule-based perturbation selection, and emits stability-bound certificates.

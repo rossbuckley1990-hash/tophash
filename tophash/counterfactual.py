@@ -13,6 +13,7 @@ The output is not a vector — it is a structured dossier of:
 """
 import numpy as np
 import networkx as nx
+import hashlib
 import copy
 from typing import Dict, Any, List, Tuple, Callable
 
@@ -31,12 +32,32 @@ PERTURBATION_FAMILIES = [
 ]
 
 
+def _stable_seed(family: str, scale: float) -> int:
+    """
+    Deterministic, cross-process, cross-machine seed for a perturbation family.
+
+    Python's built-in hash() is salted per-process for strings and tuples
+    containing strings (PYTHONHASHSEED, since Python 3.3). We must not use it
+    for any seed that includes a family name. Use SHA-256 instead, which is
+    stable across processes and machines.
+
+    The seed does NOT incorporate the graph identity — by design, perturbations
+    of the same family at the same scale produce comparable response-tensor
+    cells across graphs. A future rule-based perturbation algebra (per the Ω
+    spec: top-k betweenness edges, articulation-adjacent nodes) would replace
+    this entirely; see roadmap.
+    """
+    key = f"{family}|{scale:.6f}".encode("utf-8")
+    digest = hashlib.sha256(key).digest()
+    return int.from_bytes(digest[:4], "big")
+
+
 # ============================================================
 # Stage 1 — Perturbation algebra
 # ============================================================
 def perturb_node_deletion(G: nx.Graph, scale: float) -> nx.Graph:
     """Delete fraction `scale` of nodes uniformly at random (deterministic seed)."""
-    rng = np.random.RandomState(hash((scale,)) % (2**32))
+    rng = np.random.RandomState(_stable_seed("node_deletion", scale))
     n = G.number_of_nodes()
     k = max(1, int(round(n * scale)))
     nodes_to_remove = rng.choice(list(G.nodes()), size=min(k, n - 1), replace=False)
@@ -47,7 +68,7 @@ def perturb_node_deletion(G: nx.Graph, scale: float) -> nx.Graph:
 
 def perturb_edge_deletion(G: nx.Graph, scale: float) -> nx.Graph:
     """Delete fraction `scale` of edges uniformly at random."""
-    rng = np.random.RandomState(hash(("edge_del", scale)) % (2**32))
+    rng = np.random.RandomState(_stable_seed("edge_deletion", scale))
     m = G.number_of_edges()
     k = max(1, int(round(m * scale)))
     edges = list(G.edges())
@@ -64,7 +85,7 @@ def perturb_edge_deletion(G: nx.Graph, scale: float) -> nx.Graph:
 
 def perturb_edge_insertion(G: nx.Graph, scale: float) -> nx.Graph:
     """Insert fraction `scale` * |non_edges| new edges."""
-    rng = np.random.RandomState(hash(("edge_ins", scale)) % (2**32))
+    rng = np.random.RandomState(_stable_seed("edge_insertion", scale))
     n = G.number_of_nodes()
     nodes = list(G.nodes())
     non_edges = [(u, v) for u in nodes for v in nodes if u < v and not G.has_edge(u, v)]
@@ -81,7 +102,7 @@ def perturb_edge_insertion(G: nx.Graph, scale: float) -> nx.Graph:
 
 def perturb_rewiring(G: nx.Graph, scale: float) -> nx.Graph:
     """Rewire fraction `scale` of edges: delete an edge and add a random new one."""
-    rng = np.random.RandomState(hash(("rewire", scale)) % (2**32))
+    rng = np.random.RandomState(_stable_seed("rewiring", scale))
     edges = list(G.edges())
     k = max(1, int(round(len(edges) * scale)))
     H = G.copy()
@@ -102,7 +123,7 @@ def perturb_rewiring(G: nx.Graph, scale: float) -> nx.Graph:
 
 def perturb_motif_mask(G: nx.Graph, scale: float) -> nx.Graph:
     """Mask triangles: remove one edge from `scale` fraction of triangles."""
-    rng = np.random.RandomState(hash(("motif", scale)) % (2**32))
+    rng = np.random.RandomState(_stable_seed("motif_mask", scale))
     triangles = []
     for c in nx.enumerate_all_cliques(G):
         if len(c) == 3:
@@ -268,8 +289,34 @@ def extract_invariant_core(response: Dict[str, Any],
 
 
 # ============================================================
-# Stage 4 — Minimal-edit certificate
+# Stage 4 — Minimal-edit certificate (with exact oracle verification)
 # ============================================================
+def _exact_min_cut(G: nx.Graph) -> Tuple[float, set]:
+    """
+    Compute the exact minimum edge cut using the Stoer-Wagner algorithm.
+
+    Returns (cut_value, cut_partition) where cut_value is the number of edges
+    whose removal disconnects the graph, and cut_partition is one side of the
+    cut (a set of nodes).
+
+    This is the classical polynomial-time oracle for the "minimum edits to
+    disconnect a graph" predicate. We use it to verify Ω∞'s perturbation-
+    based certificate rather than trusting the perturbation search.
+
+    Note: Stoer-Wagner returns a global min-cut; for graphs that are already
+    disconnected, the cut value is 0.
+    """
+    if G.number_of_nodes() == 0:
+        return 0, set()
+    if not nx.is_connected(G):
+        return 0, set(next(iter(nx.connected_components(G))))
+    try:
+        cut_value, partition = nx.stoer_wagner(G)
+        return cut_value, set(partition)
+    except Exception:
+        return float('inf'), set()
+
+
 def minimal_edit_certificate(G: nx.Graph,
                               target_predicate: Callable[[nx.Graph], bool] = None,
                               max_cost: float = 0.3) -> Dict[str, Any]:
@@ -280,15 +327,31 @@ def minimal_edit_certificate(G: nx.Graph,
 
     Searches over perturbation families and increasing scales, returns the
     first admissible edit set that flips the predicate.
+
+    For the default "disconnect" predicate, we additionally verify the
+    certificate against the exact Stoer-Wagner min-cut oracle: we report
+    `oracle_min_cut_value` (the true minimum number of edges whose removal
+    disconnects the graph) and `oracle_verified` (whether the Ω-found
+    certificate cost equals or exceeds the oracle's minimum).
     """
     G = v3_core._normalize_graph(G)
 
+    default_disconnect = target_predicate is None
     if target_predicate is None:
         def target_predicate(g):
             return not nx.is_connected(g)
 
     initial_state = target_predicate(G)
     scales = [0.02, 0.05, 0.10, 0.15, 0.20, 0.30]
+
+    # For the disconnect predicate, compute the exact oracle up-front
+    oracle_min_cut_value = None
+    oracle_verified = None
+    if default_disconnect:
+        try:
+            oracle_min_cut_value, _ = _exact_min_cut(G)
+        except Exception:
+            oracle_min_cut_value = None
 
     for pi in PERTURBATION_FAMILIES:
         perturber = PERTURBERS[pi]
@@ -299,21 +362,47 @@ def minimal_edit_certificate(G: nx.Graph,
                 G_pert = perturber(G, s)
                 new_state = target_predicate(G_pert)
                 if new_state != initial_state:
+                    # Ω∞ found a certificate. Verify against oracle if applicable.
+                    edges_removed = G.number_of_edges() - G_pert.number_of_edges()
+                    if default_disconnect and oracle_min_cut_value is not None:
+                        # Ω certificate is "verified minimal" if edges_removed equals oracle
+                        oracle_verified = (edges_removed == oracle_min_cut_value)
+
                     return {
                         "found": True,
                         "perturbation": pi,
                         "scale": s,
-                        "cost": s,  # cost = scale for now
+                        "cost": s,  # cost = scale (relative to graph size)
+                        "edges_removed": int(edges_removed),
                         "initial_predicate_state": initial_state,
                         "flipped_predicate_state": new_state,
                         "perturbed_graph_n_nodes": G_pert.number_of_nodes(),
                         "perturbed_graph_n_edges": G_pert.number_of_edges(),
-                        "proof_trail": f"Applied {pi} at scale {s}; predicate flipped from {initial_state} to {new_state}",
+                        "oracle_min_cut_value": oracle_min_cut_value,
+                        "oracle_verified": oracle_verified,
+                        "predicate": "disconnect" if default_disconnect else "custom",
+                        "proof_trail": f"Applied {pi} at scale {s} (removed {edges_removed} edges); predicate flipped from {initial_state} to {new_state}",
                     }
             except Exception:
                 continue
 
-    return {"found": False, "searched": list(PERTURBATION_FAMILIES), "scales_searched": scales}
+    # No certificate found within budget. For the disconnect predicate,
+    # report whether this was a true negative (oracle min-cut exceeds budget)
+    # or merely not-found.
+    true_negative_verified = None
+    if default_disconnect and oracle_min_cut_value is not None:
+        # Compute budget in absolute edges: max_cost * m
+        budget_edges = max_cost * G.number_of_edges()
+        true_negative_verified = (oracle_min_cut_value > budget_edges)
+
+    return {
+        "found": False,
+        "searched": list(PERTURBATION_FAMILIES),
+        "scales_searched": scales,
+        "oracle_min_cut_value": oracle_min_cut_value,
+        "true_negative_verified": true_negative_verified,
+        "predicate": "disconnect" if default_disconnect else "custom",
+    }
 
 
 # ============================================================

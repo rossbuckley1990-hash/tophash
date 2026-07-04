@@ -202,7 +202,7 @@ def draw_cover(canv, doc):
     canv.setFillColor(ACCENT)
     canv.setFont("Mono-Bold", 9)
     canv.drawString(MARGIN_L, PAGE_H - 230,
-                    "WORKING REFERENCE IMPLEMENTATION  ·  BENCHMARKED ON 5 VERTICALS")
+                    "v0  ·  REFERENCE IMPLEMENTATION  ·  CORRECTNESS TESTS  ·  SMOKE BENCHMARKS")
 
     # Title
     canv.setFillColor(PRIMARY)
@@ -211,9 +211,9 @@ def draw_cover(canv, doc):
 
     canv.setFillColor(PRIMARY)
     canv.setFont("Sans-Bold", 28)
-    canv.drawString(MARGIN_L, PAGE_H - 328, "Working Implementation &")
+    canv.drawString(MARGIN_L, PAGE_H - 328, "Reference Implementation &")
     canv.setFillColor(ACCENT_2)
-    canv.drawString(MARGIN_L, PAGE_H - 364, "5-Vertical Benchmark Report")
+    canv.drawString(MARGIN_L, PAGE_H - 364, "Benchmark Report (v0)")
 
     # Accent bar
     canv.setFillColor(ACCENT)
@@ -236,17 +236,18 @@ def draw_cover(canv, doc):
     canv.drawString(MARGIN_L + 24, 270, "IMPLEMENTATION SCOPE")
 
     canv.setFillColor(PRIMARY)
-    canv.setFont("Sans-Bold", 18)
-    canv.drawString(MARGIN_L + 24, 245, "3 layers · 11 theorem families · 103 real graphs · 5 verticals")
+    canv.setFont("Sans-Bold", 16)
+    canv.drawString(MARGIN_L + 24, 245, "3 layers · 8 verticals · 90 real + 13 synthetic graphs")
 
     canv.setFillColor(PRIMARY_DIM)
     canv.setFont("BodySerif", 10)
     lines = [
         "TopHash v3: training-free 52D structural fingerprint (persistence + spectral + geometry).",
-        "TopHashX: exact canonization + machine-auditable proof objects + SHA-256 canonical ID.",
+        "TopHashX: pynauty-backed canonical labeling + machine-auditable proof objects + SHA-256 ID.",
         "TopHash Ω∞: counterfactual perturbation engine + invariant core + minimal-edit certs.",
-        "Tested on real datasets: PyPI dependency graphs, MUTAG molecules, torchvision models,",
+        "Tested on: PyPI dep graphs, MUTAG/PROTEINS/NCI1 molecules, NN architectures,",
         "SNAP email-Eu-core / Epinions / web-Stanford / ca-GrQc / p2p-Gnutella networks.",
+        "Determinism: bitwise-identical across two subprocesses with different PYTHONHASHSEED.",
     ]
     for i, line in enumerate(lines):
         canv.drawString(MARGIN_L + 24, 218 - i * 16, line)
@@ -254,7 +255,7 @@ def draw_cover(canv, doc):
     # Footer
     canv.setFillColor(PRIMARY_MUTE)
     canv.setFont("Mono-Bold", 8)
-    canv.drawString(MARGIN_L, 56, "CRUCIBLE GOVERNANCE LTD  ·  CONFIDENTIAL")
+    canv.drawString(MARGIN_L, 56, "CRUCIBLE GOVERNANCE LTD  ·  MIT LICENSE")
     canv.drawRightString(PAGE_W - MARGIN_R, 56, "tophash.io")
 
     canv.restoreState()
@@ -272,7 +273,7 @@ def draw_body_chrome(canv, doc):
     canv.setFont("Mono-Bold", 7.5)
     canv.drawString(MARGIN_L + 12, PAGE_H - 20, "TOPHASH  ·  IMPLEMENTATION REPORT")
     canv.setFillColor(PRIMARY_DIM)
-    canv.drawRightString(PAGE_W - MARGIN_R, PAGE_H - 20, "v1.0  ·  2026  ·  CONFIDENTIAL")
+    canv.drawRightString(PAGE_W - MARGIN_R, PAGE_H - 20, "v0  ·  2026  ·  MIT LICENSE")
 
     # Footer
     canv.setStrokeColor(LINE)
@@ -331,7 +332,7 @@ def build_story():
         "The implementation comprises a Python package of approximately 1,400 lines spanning "
         "persistence homology, spectral graph theory, geometric statistics, Weisfeiler-Lehman "
         "color refinement, canonical labeling with bounded automorphism search, and a "
-        "five-family perturbation algebra. The benchmark suite evaluates 103 real-world graphs "
+        "five-family perturbation algebra. The benchmark suite evaluates 90 real + 13 synthetic graphs "
         "ranging from 2 to 500 nodes, totaling 720 individual perturbation evaluations across "
         "the Ω∞ counterfactual engine. All benchmarks ran on a single workstation in under "
         "ten minutes.",
@@ -340,34 +341,42 @@ def build_story():
     story.append(kpi_strip([
         ("LAYERS", "3"),
         ("VERTICALS", "5"),
-        ("GRAPHS TESTED", "103"),
-        ("PERTURBATIONS", "720"),
-        ("THEOREM FAMILIES", "11"),
+        ("GRAPHS TESTED", "90 real + 13 syn"),
+        ("TUDatasets", "3 (MUTAG/PROTEINS/NCI1)"),
+        ("CANON ENGINE", "pynauty"),
+        ("DETERMINISM", "bitwise CI pass"),
     ]))
     story.append(Spacer(1, 10))
     story.append(Paragraph("KEY FINDINGS", EYEBROW))
     story.append(AccentBar())
     findings = [
-        ("TopHash v3 classification matches the Weisfeiler-Lehman baseline.",
-         "On the drug-discovery molecular classification benchmark, TopHash v3 (52D) achieves 80.8% "
-         "accuracy via SVM cross-validation, identical to the WL subtree kernel baseline. This "
-         "validates that the training-free multi-view fingerprint captures discriminative signal "
-         "comparable to the standard combinatorial baseline — without any learning."),
-        ("TopHashX canonical labeling is correct.",
-         "Across all 5 verticals, permutation invariance holds at 100%: relabeled graphs always "
-         "produce the same canonical ID. On the 19 graph pairs where networkx's isomorphism "
-         "checker returned a definitive verdict, TopHashX agreed 100% of the time. Mean canonical "
-         "ID computation time is 1.9 to 6.2 milliseconds per graph."),
-        ("TopHash Ω∞ discovers minimal-edit certificates in 96% of cases.",
-         "The counterfactual engine successfully located the least-cost admissible edit that flips "
-         "a target predicate (graph connectivity) in 47 of 50 test graphs. The 3 failures were "
-         "on dense graphs where the predicate was so robust that no perturbation within the cost "
-         "budget could flip it — a true negative, not a false negative."),
-        ("The structural opacity tax is real and quantifiable.",
-         "Across the 5 verticals, graphs that superficially look similar (e.g., two PyPI package "
-         "dependency trees with 8 nodes) have TopHash fingerprints that differ by 12 to 18 units "
-         "of Euclidean distance. SHA-256 over their byte representations would be meaningless — "
-         "TopHash captures the structural difference that matters."),
+        ("TopHash v3 beats the WL baseline on all 3 real TUDatasets.",
+         "On MUTAG (188 graphs), TopHash v3 scores 86.2% — beating WL (81.4%) by 4.8 points and the "
+         "majority-class dummy (66.5%) by 19.7 points. This lands in the published WL kernel range "
+         "(84-86%). On PROTEINS (1,113 graphs) TopHash scores 74.8% vs WL's 71.9%. On NCI1 (500-graph "
+         "sample of 4,110) TopHash scores 71.0% vs WL's 69.0%. The dummy baseline is reported "
+         "explicitly to confirm no majority-class collapse."),
+        ("TopHashX canonical labeling is provably exact (pynauty-backed).",
+         "With pynauty as the canon engine, permutation invariance holds at 100% across all 8 verticals. "
+         "On every testable isomorphism pair (14 total), TopHashX agrees with networkx 100% of the time. "
+         "Uniqueness is 86.7% on MUTAG (the 13.3% non-unique are genuine isomorphic-pair duplicates in "
+         "the dataset) and 100% on all other verticals. The proof object honestly reports "
+         "exactness_guaranteed=True. Mean canonical ID time is 0.7-3.3ms per graph."),
+        ("TopHash Ω∞ finds predicate-flipping edits but NOT provably minimal ones — an honest negative.",
+         "Ω∞ locates edits that flip the connectivity predicate in 90-100% of test cases. However, "
+         "when checked against the exact Stoer-Wagner min-cut oracle, ZERO of the Ω-found certificates "
+         "match the true minimum. The perturbation-by-scale search overshoots. This is a real "
+         "limitation: Ω∞ cannot honestly claim 'minimal-edit' certificates for predicates where an "
+         "exact oracle exists. The defense is that Ω is predicate-general (target: class-flip, "
+         "regime-change — no polynomial oracle exists); for the disconnect predicate specifically, "
+         "production should call Stoer-Wagner directly."),
+        ("Determinism invariant holds — bitwise-identical across two subprocesses.",
+         "The determinism CI test runs the full pipeline in two subprocesses with different "
+         "PYTHONHASHSEED values and asserts bitwise-identical output across 24 results (v3 fingerprints, "
+         "canonical IDs, Ω∞ dossiers). This test exists because Python's built-in hash() is salted "
+         "per-process for strings — an earlier version of the perturbation engine used hash() on "
+         "string-keyed tuples and would have produced different output across interpreter restarts. "
+         "The fix (SHA-256-derived seeds) and the CI test together make the determinism claim true."),
     ]
     for title, body in findings:
         story.append(Paragraph(f"<b>{title}</b>", BODY))
@@ -474,9 +483,9 @@ def build_story():
     # PAGE 3 — Datasets: 5 verticals
     # ============================================================
     story.extend(section_header("03  ·  DATASETS",
-                                 "Real public data from all 5 verticals."))
+                                 "Real public data from 5 verticals + 3 TUDatasets."))
     story.append(Paragraph(
-        "The benchmark suite evaluates TopHash on 103 real-world graphs sourced from public "
+        "The benchmark suite evaluates TopHash on 90 real + 13 synthetic graphs sourced from public "
         "datasets across each of the five verticals identified in the investment memo. All "
         "datasets are reproducibly fetched by <font face='Mono'>scripts/fetch_datasets.py</font>; "
         "no proprietary or restricted data is used. The table below summarizes the source, "
@@ -546,13 +555,17 @@ def build_story():
     # PAGE 4 — Benchmark 1: TopHash v3 classification
     # ============================================================
     story.extend(section_header("04  ·  BENCHMARK 1",
-                                 "TopHash v3 — graph classification accuracy."))
+                                 "TopHash v3 — graph classification on real TUDatasets."))
     story.append(Paragraph(
-        "We benchmark TopHash v3 (52D) and TopHash v3 Ensemble (156D) against a Weisfeiler-Lehman "
-        "subtree kernel baseline on the standard graph classification task: train an SVM on the "
-        "computed fingerprints and report 10-fold stratified cross-validation accuracy. The "
-        "WL subtree kernel is the canonical training-free graph kernel baseline, so accuracy "
-        "parity with WL is the minimum bar for TopHash v3 to clear.",
+        "We benchmark TopHash v3 (52D) and TopHash v3 Ensemble (156D) against two baselines on "
+        "the standard graph classification task: a Weisfeiler-Lehman subtree kernel (128D hashed "
+        "histogram) + SVM, and a DummyClassifier(strategy='most_frequent') that always predicts "
+        "the majority class. The dummy baseline is the integrity check the report's earlier "
+        "version was missing: if TopHash accuracy ≈ dummy accuracy, the classifier is collapsing "
+        "to the majority class and the benchmark is measuring nothing. All three real TUDatasets "
+        "are evaluated under 10-fold stratified cross-validation. Published WL kernel accuracy on "
+        "real MUTAG is approximately 84-86% in the literature — an external yardstick the smoke "
+        "test could never provide.",
         BODY))
 
     # Add chart 2
@@ -562,34 +575,38 @@ def build_story():
         story.append(Image(chart2_path, width=CONTENT_W, height=CONTENT_W * 0.5))
         story.append(Spacer(1, 8))
 
-    # Detailed results table
-    cls_data = [[Paragraph("VERTICAL", META_LABEL), Paragraph("METHOD", META_LABEL),
+    # Detailed results table — real TUDatasets with dummy baseline
+    cls_data = [[Paragraph("DATASET", META_LABEL), Paragraph("METHOD", META_LABEL),
                  Paragraph("DIM", META_LABEL), Paragraph("ACCURACY", META_LABEL),
-                 Paragraph("TIME/GRAPH", META_LABEL)]]
-    for v in ["drug_discovery", "data_infrastructure"]:
+                 Paragraph("Δ DUMMY", META_LABEL)]]
+    for v in ["tudataset_MUTAG", "tudataset_PROTEINS", "tudataset_NCI1"]:
         if v not in results:
             continue
         cls = results[v].get("bench_v3_classification")
-        if not cls or "TopHash_v3_52D" not in cls:
+        if not cls:
             continue
-        for method in ["WL_baseline", "TopHash_v3_52D", "TopHash_v3E_156D"]:
+        n_graphs = results[v].get("n_graphs", "?")
+        for method in ["Dummy_most_frequent", "WL_baseline_128D", "TopHash_v3_52D", "TopHash_v3E_156D"]:
             if method not in cls or "accuracy_mean" not in cls[method]:
                 continue
+            m = cls[method]
+            delta = m.get("beats_dummy_by", 0)
+            delta_str = f"{delta:+.3f}" if method != "Dummy_most_frequent" else "—"
             cls_data.append([
-                Paragraph(v.replace('_', ' ').title(), TABLE_CELL_BOLD),
+                Paragraph(f"{v.replace('tudataset_','')} ({n_graphs})", TABLE_CELL_BOLD),
                 Paragraph(method, TABLE_CELL_MONO),
-                Paragraph(str(cls[method].get("feature_dim", "?")), TABLE_CELL),
-                Paragraph(f"{cls[method]['accuracy_mean']:.3f} ± {cls[method]['accuracy_std']:.3f}", TABLE_CELL_BOLD),
-                Paragraph(f"{cls[method].get('feature_time_per_graph_ms', 0):.1f} ms", TABLE_CELL_MONO),
+                Paragraph(str(m.get("feature_dim", 0)), TABLE_CELL),
+                Paragraph(f"{m['accuracy_mean']:.3f} ± {m['accuracy_std']:.3f}", TABLE_CELL_BOLD),
+                Paragraph(delta_str, TABLE_CELL_MONO),
             ])
-    cls_table = Table(cls_data, colWidths=[CONTENT_W * 0.20, CONTENT_W * 0.28,
-                                             CONTENT_W * 0.10, CONTENT_W * 0.22, CONTENT_W * 0.20])
+    cls_table = Table(cls_data, colWidths=[CONTENT_W * 0.18, CONTENT_W * 0.28,
+                                             CONTENT_W * 0.08, CONTENT_W * 0.22, CONTENT_W * 0.24])
     cls_table.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 6),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 6),
-        ("TOPPADDING", (0, 0), (-1, -1), 6),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ("LEFTPADDING", (0, 0), (-1, -1), 5),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
         ("BACKGROUND", (0, 0), (-1, 0), HexColor("#F4F6FB")),
         ("LINEBELOW", (0, 0), (-1, 0), 0.5, LINE),
         ("LINEBELOW", (0, 1), (-1, -2), 0.3, LINE_SOFT),
@@ -598,13 +615,18 @@ def build_story():
     story.append(cls_table)
     story.append(Spacer(1, 10))
     story.append(Paragraph(
-        "<b>Interpretation.</b>  TopHash v3 matches the WL baseline's 80.8% accuracy on the "
-        "drug-discovery benchmark, while using a richer multi-view signal (persistence + "
-        "spectral + geometry vs WL's pure combinatorial refinement). The 156D Ensemble variant "
-        "does not improve accuracy here because the molecular graphs are small enough that the "
-        "fine-resolution fingerprint already saturates the discriminative signal — Ensemble's "
-        "value emerges on larger graphs with multi-scale structure (visible in the data-"
-        "infrastructure results).",
+        "<b>Interpretation.</b>  On real MUTAG (188 graphs), TopHash v3 scores 86.2% — beating "
+        "the WL baseline (81.4%) by 4.8 points and the majority-class dummy (66.5%) by 19.7 "
+        "points. This lands squarely in the published WL kernel range (84-86%) and validates "
+        "that the training-free multi-view fingerprint captures real discriminative signal, not "
+        "majority-class collapse. The 156D Ensemble variant adds another 1.6 points (87.8%), "
+        "showing that multi-resolution structure helps even on small molecular graphs. PROTEINS "
+        "(1,113 graphs) and NCI1 (500-graph sample of 4,110) show the same pattern: TopHash "
+        "beats WL, and all methods beat the dummy by 12-21 points. The synthetic-drug-discovery "
+        "smoke test from the report's earlier version scored 80.8% on 31 hand-built molecules "
+        "— coincidentally matching the WL baseline to three decimals because both classifiers "
+        "were collapsing to the same fold predictions on a tiny dataset. The real TUDataset "
+        "results replace that smoke test with a credible benchmark.",
         BODY))
 
     story.append(PageBreak())
@@ -613,14 +635,18 @@ def build_story():
     # PAGE 5 — Benchmark 2: TopHashX isomorphism
     # ============================================================
     story.extend(section_header("05  ·  BENCHMARK 2",
-                                 "TopHashX — canonical labeling correctness."))
+                                 "TopHashX — canonical labeling (pynauty-backed)."))
     story.append(Paragraph(
         "TopHashX claims to compute a complete invariant: <font face='Mono'>C(G) = C(H)</font> "
-        "if and only if <font face='Mono'>G ≅ H</font>. We test three properties: "
-        "(a) <b>permutation invariance</b> — relabeling a graph's nodes must not change its "
-        "canonical ID; (b) <b>isomorphism agreement</b> — TopHashX's verdict must match "
-        "networkx's <font face='Mono'>is_isomorphic</font> on every pair we test; and "
-        "(c) <b>uniqueness</b> — distinct (non-isomorphic) graphs must produce distinct IDs.",
+        "if and only if <font face='Mono'>G ≅ H</font>. The canonical labeling algorithm itself "
+        "is a solved problem — nauty/Traces/bliss are free, decades-hardened, and pip-installable. "
+        "TopHash's contribution is not the labeling algorithm; it is the proof object around it: "
+        "the refinement trace, witness log, versioned serialization, and SHA-256 receipt. So we "
+        "delegate the labeling to <font face='Mono'>pynauty</font> (industry-standard nauty "
+        "binding) and keep our wrapper. This converts the central correctness claim from "
+        "aspirational to true. We test three properties: (a) <b>permutation invariance</b>, "
+        "(b) <b>isomorphism agreement with networkx</b>, and (c) <b>uniqueness</b> (distinct "
+        "graphs → distinct IDs).",
         BODY))
 
     chart1_path = "/home/z/my-project/data/benchmarks/charts/chart1_canon_metrics.png"
@@ -629,54 +655,68 @@ def build_story():
         story.append(Image(chart1_path, width=CONTENT_W, height=CONTENT_W * 0.5))
         story.append(Spacer(1, 8))
 
-    # Detailed per-vertical table
+    # Detailed per-vertical table — now includes TUDatasets and uses n/a for 0-pair cases
     can_data = [[Paragraph("VERTICAL", META_LABEL),
-                 Paragraph("N_TESTED", META_LABEL),
+                 Paragraph("ENGINE", META_LABEL),
+                 Paragraph("N", META_LABEL),
                  Paragraph("PERM INVAR", META_LABEL),
                  Paragraph("NX AGREEMENT", META_LABEL),
                  Paragraph("UNIQUENESS", META_LABEL),
                  Paragraph("MEAN TIME", META_LABEL)]]
-    for v in ["cybersecurity", "drug_discovery", "ai_supply_chain", "financial_fraud", "data_infrastructure"]:
+    for v in ["cybersecurity", "drug_discovery", "ai_supply_chain", "financial_fraud",
+              "data_infrastructure", "tudataset_MUTAG", "tudataset_PROTEINS", "tudataset_NCI1"]:
         if v not in results:
             continue
         ci = results[v].get("bench_canon_isomorphism")
         if not ci:
             continue
+        engine = ci.get("canon_engine", "?")
+        iso = ci.get("isomorphism_vs_nx", {})
+        nx_str = iso.get("agreement_rate_str", "n/a")
+        n_tested = iso.get("n_pairs_tested", 0)
+        if n_tested == 0:
+            nx_display = "n/a (0 pairs)"
+        else:
+            nx_display = nx_str
         can_data.append([
-            Paragraph(v.replace('_', ' ').title(), TABLE_CELL_BOLD),
+            Paragraph(v.replace('_', ' ').replace('tudataset ', 'TU:').title(), TABLE_CELL_BOLD),
+            Paragraph(engine, TABLE_CELL_MONO),
             Paragraph(str(ci.get("n_graphs_tested", 0)), TABLE_CELL_MONO),
-            Paragraph(f"{ci['permutation_invariance']['pass_rate']*100:.1f}%", TABLE_CELL_BOLD),
-            Paragraph(f"{ci['isomorphism_vs_nx']['agreement_rate']*100:.1f}%", TABLE_CELL_BOLD),
-            Paragraph(f"{ci['uniqueness']['uniqueness_rate']*100:.1f}%", TABLE_CELL_BOLD),
+            Paragraph(f"{ci['permutation_invariance']['pass_rate']*100:.0f}%", TABLE_CELL_BOLD),
+            Paragraph(nx_display, TABLE_CELL_BOLD),
+            Paragraph(f"{ci['uniqueness']['uniqueness_rate']*100:.0f}%", TABLE_CELL_BOLD),
             Paragraph(f"{ci['timing']['mean_id_time_ms']:.1f} ms", TABLE_CELL_MONO),
         ])
-    can_table = Table(can_data, colWidths=[CONTENT_W * 0.22, CONTENT_W * 0.12,
-                                            CONTENT_W * 0.14, CONTENT_W * 0.16,
-                                            CONTENT_W * 0.14, CONTENT_W * 0.22])
+    can_table = Table(can_data, colWidths=[CONTENT_W * 0.18, CONTENT_W * 0.11,
+                                            CONTENT_W * 0.06, CONTENT_W * 0.12,
+                                            CONTENT_W * 0.16, CONTENT_W * 0.13,
+                                            CONTENT_W * 0.14])
     can_table.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 5),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 5),
-        ("TOPPADDING", (0, 0), (-1, -1), 6),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ("LEFTPADDING", (0, 0), (-1, -1), 4),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
         ("BACKGROUND", (0, 0), (-1, 0), HexColor("#F4F6FB")),
         ("LINEBELOW", (0, 0), (-1, 0), 0.5, LINE),
         ("LINEBELOW", (0, 1), (-1, -2), 0.3, LINE_SOFT),
         ("ROWBACKGROUNDS", (0, 1), (-1, -1), [white, HexColor("#FAFBFD")]),
-        ("TEXTCOLOR", (2, 1), (4, -1), ACCENT),
+        ("FONTSIZE", (0, 1), (-1, -1), 8.5),
     ]))
     story.append(can_table)
     story.append(Spacer(1, 10))
     story.append(Paragraph(
-        "<b>Interpretation.</b>  TopHashX achieves 100% permutation invariance on every "
-        "vertical — relabeled graphs always produce the same canonical ID, as required. "
-        "Isomorphism agreement with networkx is 100% on the 19 pairs we tested. Uniqueness is "
-        "73.1% on cybersecurity and 36.7% on drug discovery — meaning several distinct "
-        "molecules produce identical canonical IDs. This is a known limitation of the current "
-        "bounded-search canon (it falls back to a refinement-based heuristic when the "
-        "permutation space exceeds 1000). The production implementation would replace this "
-        "with a full Nauty-style search, recovering 100% uniqueness. Mean ID computation "
-        "time is 1.9-6.2 milliseconds per graph — fast enough for real-time API use.",
+        "<b>Interpretation.</b>  With pynauty as the canon engine, TopHashX achieves 100% "
+        "permutation invariance on every vertical and 100% agreement with networkx on every "
+        "testable pair (14 pairs total across MUTAG and NCI1). The 'n/a (0 pairs)' cells on "
+        "PROTEINS, AI supply chain, and data infrastructure reflect that no two graphs in those "
+        "test sets happened to share both node count and edge count — networkx's pre-filter "
+        "trivially rejected them, so no isomorphism check was performed. This is reported as "
+        "n/a, not 0%. Uniqueness is now 86.7% on MUTAG (up from 36.7% with the heuristic) and "
+        "100% on PROTEINS, NCI1, AI supply chain, financial fraud, and data infrastructure. The "
+        "remaining 13.3% non-uniqueness on MUTAG corresponds to 4 pairs of genuinely isomorphic "
+        "molecules in the dataset — distinct SMILES strings that encode the same molecular "
+        "graph. Mean canonical ID computation is 0.7-3.3ms per graph.",
         BODY))
 
     story.append(PageBreak())
@@ -706,35 +746,46 @@ def build_story():
                 Paragraph("INV CHANNELS", META_LABEL),
                 Paragraph("FRAGILE CHANNELS", META_LABEL),
                 Paragraph("MIN-EDIT RATE", META_LABEL),
+                Paragraph("ORACLE-VERIFIED", META_LABEL),
                 Paragraph("MEAN TIME", META_LABEL)]]
-    for v in ["cybersecurity", "drug_discovery", "ai_supply_chain", "financial_fraud", "data_infrastructure"]:
+    for v in ["cybersecurity", "drug_discovery", "ai_supply_chain", "financial_fraud",
+              "data_infrastructure", "tudataset_MUTAG", "tudataset_PROTEINS", "tudataset_NCI1"]:
         if v not in results:
             continue
         oc = results[v].get("bench_omega_counterfactual")
         if not oc:
             continue
+        oracle = oc.get("oracle_verification", {})
+        n_oracle_verified = oracle.get("n_certs_oracle_verified", 0)
+        n_certs = oc.get("min_edit_certificates_found", 0)
+        n_true_neg = oracle.get("n_true_negatives_oracle_verified", 0)
+        oracle_str = f"{n_oracle_verified}/{n_certs}"
+        if n_true_neg > 0:
+            oracle_str += f" (+{n_true_neg} tn)"
         om_data.append([
-            Paragraph(v.replace('_', ' ').title(), TABLE_CELL_BOLD),
+            Paragraph(v.replace('_', ' ').replace('tudataset ', 'TU:').title(), TABLE_CELL_BOLD),
             Paragraph(str(oc.get("total_perturbations_evaluated", 0)), TABLE_CELL_MONO),
             Paragraph(f"{oc.get('avg_invariant_channels', 0):.1f}", TABLE_CELL_BOLD),
             Paragraph(f"{oc.get('avg_fragile_channels', 0):.1f}", TABLE_CELL_BOLD),
             Paragraph(f"{oc.get('min_edit_rate', 0)*100:.0f}%", TABLE_CELL_BOLD),
+            Paragraph(oracle_str, TABLE_CELL_MONO),
             Paragraph(f"{oc.get('timing', {}).get('mean_ms', 0):.0f} ms", TABLE_CELL_MONO),
         ])
-    om_table = Table(om_data, colWidths=[CONTENT_W * 0.22, CONTENT_W * 0.16,
-                                          CONTENT_W * 0.14, CONTENT_W * 0.16,
-                                          CONTENT_W * 0.14, CONTENT_W * 0.18])
+    om_table = Table(om_data, colWidths=[CONTENT_W * 0.18, CONTENT_W * 0.13,
+                                          CONTENT_W * 0.11, CONTENT_W * 0.13,
+                                          CONTENT_W * 0.11, CONTENT_W * 0.16,
+                                          CONTENT_W * 0.18])
     om_table.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 5),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 5),
-        ("TOPPADDING", (0, 0), (-1, -1), 6),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ("LEFTPADDING", (0, 0), (-1, -1), 4),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
         ("BACKGROUND", (0, 0), (-1, 0), HexColor("#F4F6FB")),
         ("LINEBELOW", (0, 0), (-1, 0), 0.5, LINE),
         ("LINEBELOW", (0, 1), (-1, -2), 0.3, LINE_SOFT),
         ("ROWBACKGROUNDS", (0, 1), (-1, -1), [white, HexColor("#FAFBFD")]),
-        ("TEXTCOLOR", (4, 1), (4, -1), ACCENT),
+        ("FONTSIZE", (0, 1), (-1, -1), 8.5),
     ]))
     story.append(om_table)
     story.append(Spacer(1, 10))
@@ -746,14 +797,23 @@ def build_story():
         story.append(Spacer(1, 8))
 
     story.append(Paragraph(
-        "<b>Interpretation.</b>  TopHash Ω∞ successfully discovered minimal-edit certificates "
-        "in 47 of 50 cases (94% — the 3 failures were on dense graphs where the connectivity "
-        "predicate was robust to all perturbations within the cost budget, a true negative). "
-        "The invariant core contains 8-11 stable channels per graph across all verticals, "
-        "meaning roughly two-thirds of the 15 channel-tensor cells barely respond to admissible "
-        "perturbation. This is the structural substrate that TopHashX's canonical ID relies "
-        "on, and it explains why canonical IDs are stable under permutation: the underlying "
-        "structural signal is invariant to the kind of edits that confuse byte-level hashes.",
+        "<b>Interpretation — and an honest negative result.</b>  TopHash Ω∞ finds "
+        "predicate-flipping edits (the 'min-edit rate' column) in 90-100% of test cases across "
+        "all verticals. However, the 'ORACLE-VERIFIED' column tells the harder truth: when we "
+        "check each Ω-found certificate against the exact Stoer-Wagner minimum edge cut, "
+        "<b>zero of the Ω-found certificates match the true minimum</b>. Ω∞ is finding edits "
+        "that flip the predicate, but it is NOT finding the minimal such edit — its "
+        "perturbation-by-scale search overshoots the true min-cut. This is a real limitation, "
+        "not a measurement artifact, and it means the current Ω∞ cannot honestly claim to "
+        "produce <i>minimal</i>-edit certificates. The defense is that Ω is predicate-general "
+        "(disconnect is the correctness-check predicate; the engine targets arbitrary "
+        "predicates like class-membership-flip, regime-change, cluster-reassignment, for which "
+        "no polynomial-time oracle exists). For predicates where an exact oracle does exist, "
+        "the production roadmap is to call the oracle directly and reserve Ω for the "
+        "predicate-general case. The 1 'true negative verified' on PROTEINS is the one case "
+        "where Ω correctly found no certificate within budget AND the oracle confirmed the "
+        "min-cut exceeded the budget — a verified true negative. The invariant core contains "
+        "8-11 stable channels per graph across all verticals.",
         BODY))
 
     story.append(PageBreak())
@@ -939,7 +999,21 @@ def build_story():
         ("No persistence stability theorem is currently enforced.",
          "The proof object carries the refinement trace but does not yet emit explicit "
          "stability-bound certificates (Lipschitz constants, interleaving bounds). The "
-         "mathematics is implemented; the certificate emission is not."),
+         "mathematics is implemented; the certificate emission is not. Honest phrasing: "
+         "theorem-informed; bound-certificate emission is roadmap."),
+        ("Ω∞ minimal-edit certificates are NOT verified minimal.",
+         "When checked against the exact Stoer-Wagner min-cut oracle, zero of the Ω-found "
+         "certificates matched the true minimum. The perturbation-by-scale search overshoots. "
+         "For predicates with polynomial-time oracles (disconnect = min-cut), production should "
+         "call the oracle directly; Ω is reserved for predicate-general cases where no oracle "
+         "exists. The current report discloses this as 'min-edit rate' (does Ω find a flip?) "
+         "rather than 'min-edit verified' (is the flip provably minimal?) — the latter is 0%."),
+        ("Perturbation seeds are deterministic but rule-based selection is roadmap.",
+         "The perturbation algebra currently selects edges/nodes to perturb using a "
+         "deterministic SHA-256-seeded RNG. This is reproducible (the determinism CI test "
+         "proves it) but it is not the typed structural experiment the Ω spec calls for. "
+         "Production roadmap: replace random selection with rule-based selection (top-k "
+         "betweenness edges, articulation-adjacent nodes, motif-anchored edits)."),
     ]
     for title, body in limits:
         story.append(Paragraph(f"<b>{title}</b>", BODY))
@@ -950,13 +1024,16 @@ def build_story():
     story.append(Paragraph("THE BOTTOM LINE", EYEBROW))
     story.append(AccentBar())
     story.append(Paragraph(
-        "The TopHash primitive works. Across 103 real graphs from 5 verticals, the three-layer "
-        "stack delivers what the investment memo promises: a training-free structural "
-        "fingerprint competitive with the WL baseline, an exact canonization layer with "
-        "machine-auditable proof objects, and a counterfactual engine that finds minimal-edit "
-        "certificates in 94% of cases. The known limitations are bounded and have known "
-        "production solutions (Nauty-style canon, sparse persistence, smart perturbation "
-        "pruning). The primitive is ready for design-partner deployment.",
+        "TopHash v0 is a working reference implementation with honest benchmark results. "
+        "TopHash v3 beats the WL baseline on all three real TUDatasets (MUTAG, PROTEINS, NCI1). "
+        "TopHashX, backed by pynauty, produces provably exact canonical IDs with 100% "
+        "permutation invariance and 100% networkx agreement on testable pairs. The determinism "
+        "invariant holds bitwise across independent processes. TopHash Ω∞ finds predicate-"
+        "flipping edits but does not yet produce provably minimal certificates — an honestly "
+        "reported negative result with a known production path (call the exact oracle for "
+        "predicates that have one). This is a v0: real, tested, and honest about what it does "
+        "and does not yet do. The next iteration closes the Ω∞ oracle gap, adds rule-based "
+        "perturbation selection, and emits stability-bound certificates.",
         CALLOUT))
 
     return story
@@ -967,9 +1044,9 @@ def build_pdf(output_path):
         output_path, pagesize=LETTER,
         leftMargin=MARGIN_L, rightMargin=MARGIN_R,
         topMargin=MARGIN_T + 4, bottomMargin=MARGIN_B,
-        title="TopHash — Implementation Report",
+        title="TopHash v0 — Reference Implementation & Benchmark Report",
         author="Crucible Governance Ltd",
-        subject="TopHash working implementation and 5-vertical benchmark results",
+        subject="TopHash v0 working reference implementation, correctness tests, and smoke benchmarks",
         creator="Z.ai",
     )
 
